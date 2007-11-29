@@ -1,0 +1,180 @@
+<html>
+<head>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<title>File Manager</title>
+<link rel='stylesheet' href='{{ fileman_media_url }}/style.css' type='text/css'>
+<script type="text/javascript" src="{{ fileman_media_url }}/jquery.js"></script>
+<script>
+var pwd = "{{ pwd }}";
+var url_media = "{{ fileman_media_url }}";
+var url_preview = "{% url fileman.views.preview %}";
+var url_geturl = "{% url fileman.views.getUrl %}";
+var url_home = "{% url fileman.views.list %}";
+var url_delete = "{% url fileman.views.delete %}";
+var url_destraction = "{% url fileman.views.destraction %}";
+var url_createdir = "{% url fileman.views.createDir %}";
+var url_addbufer = "{% url fileman.views.addBuffer %}";
+var url_removebufer = "{% url fileman.views.RemoveFromBuffer %}";
+</script>
+<script type="text/javascript" src="{{ fileman_media_url }}/script.js"></script>
+</head>
+
+<body>
+<div id="sidebar">
+<div class="block actions">
+<h2>Действия</h2>
+    <div class="content">
+    <p><img src="{{ fileman_media_url }}/user.gif"> {{ user }} <a href="#">[ Выйти ]</a></p><br>
+    <p><a href="{% url fileman.views.list %}"><img src="{{ fileman_media_url }}/house.png"> Домашняя папка</a></p>
+    {% if perms.fileman.can_fm_add %}<p><a href="javascript:createDir();"><img src="{{ fileman_media_url }}/folder_add.png"> Создать дирикторию</a></p>{% endif %}
+    {% if perms.fileman.can_fm_add %}<p><a href="{% url fileman.views.past %}{{ pwd }}"><img src="{{ fileman_media_url }}/page_white_paste.png"> Вставить</a></p>{% endif %}
+    {% if perms.fileman.can_fm_del %}<p><a href="{% url fileman.views.listBasket %}"><img src="{{ fileman_media_url }}/bin.png"> Корзина</a></p>{% endif %}
+    <br>
+    {% if perms.fileman.can_fm_del %}<p><a href="javascript:del();"><img src="{{ fileman_media_url }}/delete.png"> Удалить</a></p>{% endif %}
+    {% if perms.fileman.can_fm_destruct %}<p><a href="javascript:dest();"><img src="{{ fileman_media_url }}/cross.png"> Уничтожить</a></p>{% endif %}
+    </div>
+</div>
+<div class="block buffer">
+<h2>Буфер</h2>
+    <div class="content">
+    {% if  buffer %}
+    {% for file, action, name in buffer %}
+        <p>{% ifequal action 1 %}<img src="{{ fileman_media_url }}/page_white_copy.png">{% endifequal %}
+        {% ifequal action 2 %}<img src="{{ fileman_media_url }}/cut.png">{% endifequal %}
+        {{ name }}
+        <a href="{% url fileman.views.RemoveFromBuffer %}{{ file }}"><img src="{{ fileman_media_url }}/cross.png"></a>
+        </p>
+    {% endfor %}
+    {% else %}
+    Буфер пуст.
+    {% endif %}
+    </div>
+</div>
+<div class="block info">
+<h2>Информация</h2>
+    <div class="content">
+    <p>Ссылка: <input id="url" type="input"></p>
+    <p><a href="#">в буфер обмена</a></p>
+    </div>
+</div>
+{% if perms.fileman.can_fm_add %}
+<div class="block upload">
+<h2>Загрузить</h2>
+    <div class="content">
+    <form id="uploadForm" action="{% url fileman.views.upload %}" method="post" enctype="multipart/form-data">
+    <p><input type="file" name="ufile1" size="16"></p>
+    <p id="addFileFild"><a href="javascript:addFileFild()">ещё</a></p>
+    <p><input type="hidden" name="path" value="{{ pwd }}">
+    <input type="submit" value="Загрузить!"></p>
+    </form>
+    </div>
+</div>
+{% endif %}
+<div class="block preview">
+<h2>Предпросмотр</h2>
+    <div class="content">
+    <p>
+    Нет картинки
+    </p>
+    </div>
+</div>
+</div>
+<div id="main">
+{% if perms.fileman.can_fm_list %}
+<div id="pwd"><b>Вы сейчас здесь:</b> {{ pwd }}</div>
+<form id="fileListForm" method="post">
+<table id="filelist" cellpadding="0" cellspacing="0">
+{% ifnotequal pwd user.fileman_Setting.root %}
+<tr>
+<td><input DISABLED type="checkbox" id="d">
+<img src="{{ fileman_media_url }}/bullet_go.png"> <label for="d" class="dir">..</label></td>
+<td>&nbsp;</td>
+{% if perms.fileman.can_fm_add %}
+<td>&nbsp;</td>
+{% endif %}
+{% if perms.fileman.can_fm_rename %}
+<td>&nbsp;</td>
+{% endif %}
+{% if perms.fileman.can_fm_rename %}
+<td>&nbsp;</td>
+{% endif %}
+{% if perms.fileman.can_fm_del %}
+<td>&nbsp;</td>
+{% endif %}
+{% if perms.fileman.can_fm_destruct %}
+<td>&nbsp;</td>
+{% endif %}
+</tr>
+{% endifnotequal %}
+{% for file in dirlist %}
+<tr><td>
+<input type="checkbox" name="{{ file.name }}" value="{{ file.path }}" id="d{{ forloop.counter }}">
+<img src="{{ fileman_media_url }}/folder.gif"> <label for="d{{ forloop.counter }}" class="dir">{{ file.name }}</label></td>
+<td>{{ file.size }}</td>
+{% if perms.fileman.can_fm_add %}
+<td width="18px">
+    <a href="#" title="Копировать"><img src="{{ fileman_media_url }}/page_white_copy.png" alt="Копировать"></a>
+</td>
+{% endif %}
+{% if perms.fileman.can_fm_rename %}
+<td width="18px">
+    <a href="#" title="Вырезать"><img src="{{ fileman_media_url }}/cut.png" alt="Вырезать"></a>
+</td>
+{% endif %}
+{% if perms.fileman.can_fm_rename %}
+<td width="18px">
+    <a href="#" title="Переименовать"><img src="{{ fileman_media_url }}/pencil.png" alt="Переименовать"></a>
+</td>
+{% endif %}
+{% if perms.fileman.can_fm_del %}
+<td width="18px">
+    <a href="#" onclick="return del_one(this, '{{ file.name }}', '{{ file.path }}');" title="Удалить"><img src="{{ fileman_media_url }}/delete.png" alt="Удалить"></a>
+</td>
+{% endif %}
+{% if perms.fileman.can_fm_destruct %}
+<td width="18px">
+    <a href="#" onclick="return dest_one(this, '{{ file.name }}', '{{ file.path }}');" title="Уничтожить"><img src="{{ fileman_media_url }}/cross.png" alt="Уничтожить"></a>
+</td>
+{% endif %}
+</tr>
+{% endfor %}
+{% for file in filelist %}
+<tr><td>
+<input type="checkbox" name="{{ file.name }}" value="{{ file.path }}" id="f{{ forloop.counter }}">
+<img src="{{ fileman_media_url }}/file.gif"> <label for="f{{ forloop.counter }}" class="file">{{ file.name }}</label></td>
+<td width="100px">
+    {{ file.size|filesizeformat }}
+</td>
+{% if perms.fileman.can_fm_add %}
+<td width="18px">
+    <a href="#" onclick="return copy_one(this, '{{ file.name }}', '{{ file.path }}');" title="Копировать"><img src="{{ fileman_media_url }}/page_white_copy.png" alt="Копировать"></a>
+</td>
+{% endif %}
+{% if perms.fileman.can_fm_rename %}
+<td width="18px">
+    <a href="#" onclick="return cut_one(this, '{{ file.name }}', '{{ file.path }}');" title="Вырезать"><img src="{{ fileman_media_url }}/cut.png" alt="Вырезать"></a>
+</td>
+{% endif %}
+{% if perms.fileman.can_fm_rename %}
+<td width="18px">
+    <a href="javascript:rename('{{ file.name }}');" title="Переименовать"><img src="{{ fileman_media_url }}/pencil.png" alt="Переименовать"></a>
+</td>
+{% endif %}
+{% if perms.fileman.can_fm_del %}
+<td width="18px">
+    <a href="#" onclick="return del_one(this, '{{ file.name }}', '{{ file.path }}');" title="Удалить"><img src="{{ fileman_media_url }}/delete.png" alt="Удалить"></a>
+</td>
+{% endif %}
+{% if perms.fileman.can_fm_destruct %}
+<td width="18px">
+    <a href="#" onclick="return dest_one(this, '{{ file.name }}', '{{ file.path }}');" title="Уничтожить"><img src="{{ fileman_media_url }}/cross.png" alt="Уничтожить"></a>
+</td>
+{% endif %}
+</tr>
+{% endfor %}
+</form>
+</table>
+
+{% endif %}
+</div>
+
