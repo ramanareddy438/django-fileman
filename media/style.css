@@ -1,0 +1,113 @@
+* { padding:0; margin:0; }
+h1, h2, h3, h4, h5, h6, p, pre, blockquote, label, ul, ol, dl, fieldset, address { margin:1em 5%; }
+li, dd { margin-left:5%; }
+fieldset { padding: .5em; }
+
+html {
+	width:100%; height:100%;
+	overflow:hidden;
+}
+
+body {
+	width:100%; height:100%;
+	margin:0; padding:0;
+	overflow:auto;
+	background:#ffffff;
+}
+
+a img {
+	border:0;
+}
+
+#sidebar {
+	position:absolute;
+	top:10px; left:10px;
+	width:200px;
+}
+
+#main {
+	margin: 0 10px 0 220px;
+}
+
+#pwd {
+	margin: 10px 0 10px 0;
+	background:#7CA0C7 url(/amedia/img/admin/default-bg.gif) repeat-x scroll left top;
+	border: 1px solid #ccc;
+	color: #fff;
+	font-size: 13px;
+	padding: 2px;
+}
+
+#filelist {
+	width:100%;
+	border: 1px solid #ccc;
+	margin: 0 0 10px 0;
+	background:#fafafa;
+}
+
+#sidebar .block {
+	margin:0;
+	margin-bottom:5px;
+	border: 1px solid #ccc;
+}
+
+#sidebar .block h2 {
+	background:#7CA0C7 url(/amedia/img/admin/default-bg.gif) repeat-x scroll left top;
+	margin:0;
+	padding:2px;;
+	text-align:center;
+	font-size: 13px;
+	color: #fff;
+}
+
+#sidebar .block .content {
+	padding:5px;
+	border-top: 1px solid #ccc;
+	display: none;
+}
+
+#sidebar .block p {
+	margin:0;
+}
+
+#sidebar .preview p {
+	text-align:center;
+}
+
+#main .odd {
+	background: #EDF3FE;
+}
+
+#main td {
+	border-bottom: 1px solid #ccc;
+	padding: 2px 0;
+	font-size:0.8em;
+}
+
+input {
+	margin:0 0 0 5px;
+	padding: 0;
+}
+
+label {
+	margin:0;
+	padding: 0;
+}
+
+#addFileFild {
+	text-align: right;
+}
+
+#sidebar .actions .content {
+	display: block;
+}
+
+.errornote {
+background:#FFFFCC;
+border:1px solid red;
+color:red;
+display:block;
+font-size:12px !important;
+margin:0pt 0pt 3px;
+padding:4px 5px 4px 25px;
+}
