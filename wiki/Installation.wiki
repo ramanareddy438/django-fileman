@@ -1,0 +1,24 @@
+= Requests =
+
+ * PIL
+ * Installed django.contrib.admin application.
+ * Installed django.contrib.auth application.
+
+= Instruction =
+
+ # Get app fileman: `svn checkout http://django-fileman.googlecode.com/svn/trunk/ fileman` and copy directory fileman to directory with your project.
+ # Edit `fileman/settings.py`
+  * `BASKET_FOLDER` - your "recycle bin" directory 
+  * `MEDIA_ROOT` - absolute path to fileman media directory *or* you can comment ` (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),` in `fileman/urls.py` and publish media files using your web server.
+  * `MEDIA_URL` - absolute url to fileman media directory
+ # Edit `your_project/settings.py`
+  * add `'your_project.fileman',` in `INSTALLED_APPS`
+  * add `"your_project.fileman.context_processors.urls",` in `TEMPLATE_CONTEXT_PROCESSORS`
+  * add absolute path to `fileman/templates/` in `TEMPLATE_DIRS`
+ # Open admin selection, go to Fileman -> Settings and create (or edit) profile for users.
+  * Root - root directory for user
+  * Home - home directory for user
+ # Give permission for non-admin users.
+ # You can add Alias. Example:
+  * `Path: /mnt/H/My Developement/django/cyxapeff_org/media/`
+  * `Url: http://127.0.0.1:8000/media/`
