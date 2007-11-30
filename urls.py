@@ -18,6 +18,7 @@ urlpatterns = patterns('',
     (r'^addbuffer/$', views.addBuffer),
     (r'^past/$', views.past),
     (r'^past/(?P<path>.+)$', views.past),
+    (r'^remove/$', views.RemoveFromBuffer),
     (r'^remove/(?P<path>.+)$', views.RemoveFromBuffer),
     (r'^basket/$', views.listBasket),
 )
