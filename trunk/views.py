@@ -283,7 +283,9 @@ def past(request, path = None):
 past = permission_required('fileman.can_fm_rename')(past)
 
 @login_required
-def RemoveFromBuffer(request, path):
+def RemoveFromBuffer(request, path = None):
+    if path is None:
+        return HttpResponse("Не указан путь.")
     if re.search("^%s" % request.user.fileman_Setting.root, path) is None:
         return raise_error(request,
                     ["Нет доступа"])
