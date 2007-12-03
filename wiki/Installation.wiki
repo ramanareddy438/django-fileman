@@ -1,10 +1,10 @@
-= Requests =
+= Requirements =
 
  * PIL
  * Installed django.contrib.admin application.
  * Installed django.contrib.auth application.
 
-= Instruction =
+= Instructions =
 
  # Get app fileman: `svn checkout http://django-fileman.googlecode.com/svn/trunk/ fileman` and copy directory fileman to directory with your project.
  # Edit `fileman/settings.py`
