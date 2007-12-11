@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from fileman.settings import *
-from fileman.models import *
-from fileman.forms import *
+from fileman.models import Setting, Alias
+from fileman.forms import UploadForm
+from fileman.utils import File, createHistory
 
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse
@@ -15,19 +16,12 @@ from django.contrib.auth.decorators import permission_required
 import os
 import pickle, re
 import operator
+import shutil
 
 def raise_error(request, msg):
         return render_to_response('error.html',
                        {"msg": msg},
                         context_instance=RequestContext(request))
-class File:
-    def __init__(self, name = None, path = None, isdir = None, size = None):
-        self.name = name
-        self.path = path
-        self.isdir = isdir
-        self.size = size
-    def __cmp__(self, other):
-        return cmp(self.name, other.name)
 
 @login_required
 def list(request, path = None):
@@ -46,7 +40,7 @@ def list(request, path = None):
     dirlist = []
     filelist = []
     for f in os.listdir(path):
-        file = File(f, os.path.join(path, f))
+        file = File(f, "%s/%s" % (path, f))
         if os.path.isdir(os.path.join(path, f)):
             file.isdir = 1
             file.size = "Dir"
@@ -130,12 +124,13 @@ def delete(request):
                 return raise_error(request,
                     ["Нет доступа"])
             try:
-                os.rename(request.POST[key], os.path.join(BASKET_FOLDER, os.path.split(request.POST[key])[1]))
+                os.rename(request.POST[key], "%s/%s" % (BASKET_FOLDER, os.path.split(request.POST[key])[1]))
             except Exception, msg:
                 if request.GET.has_key('xhr'):
                     return HttpResponse(msg)
                 return raise_error(request,
                     [msg])
+            createHistory(request.user, "delete", request.POST[key])
         if request.GET.has_key('xhr'):
             return HttpResponse("success")
         return HttpResponseRedirect('/fm/list/%s' % path)
@@ -171,6 +166,7 @@ def destraction(request):
                         return HttpResponse(msg)
                     return raise_error(request,
                         [msg])
+                createHistory(request.user, "destraction", request.POST[key])
         if request.GET.has_key('xhr'):
             return HttpResponse("success")
         return HttpResponseRedirect('/fm/list/%s' % path)
@@ -196,21 +192,24 @@ def move(request):
     pass
 
 @login_required
-def rename(request):
-    if request.POST:
-        if request.GET.has_key('next'):
-            path = request.GET['next']
+def rename(request, source = None, dest = None):
+    if (source is None) and (dest is None):
+        if request.POST:
+            if request.GET.has_key('next'):
+                path = request.GET['next']
+            else:
+                path = ''
+            for key in request.POST.keys():
+                if re.search("^%s" % request.user.fileman_Setting.root, request.POST[key]) is None:
+                    return raise_error(request,
+                        ["Нет доступа"])
+            return HttpResponseRedirect('/fm/list/%s' % path)
         else:
-            path = ''
-        for key in request.POST.keys():
-            if re.search("^%s" % request.user.fileman_Setting.root, request.POST[key]) is None:
-                return raise_error(request,
-                    ["Нет доступа"])
-            os.rename(request.POST[key])
-        return HttpResponseRedirect('/fm/list/%s' % path)
+            return raise_error(request,
+                ["Пустая форма"])
     else:
-        return raise_error(request,
-            ["Пустая форма"])
+        shutil.move(source, dest)
+        createHistory(request.user, "rename", source, dest)
 rename = permission_required('fileman.can_fm_rename')(rename)
                 
 @login_required
@@ -235,8 +234,6 @@ def addBuffer(request):
         buffer =  listBuffer(request)
         if not [path, 1] in buffer and not [path, 2] in buffer:
             buffer.append([path, action])
-        #request.user.fileman_Setting.buffer = pickle.dumps(buffer)
-        #request.user.fileman_Setting.save()
         request.user.fileman_Setting.writeBuffer(pickle.dumps(buffer))
         if request.GET.has_key('xhr'):
             return HttpResponse("success")
@@ -263,7 +260,6 @@ def past(request, path = None):
     if re.search("^%s" % request.user.fileman_Setting.root, path) is None:
         return raise_error(request,
                     ["Нет доступа"])
-    import shutil
     buffer = listBuffer(request)
     for item in buffer:
         to = os.path.basename(item[0])
@@ -276,8 +272,7 @@ def past(request, path = None):
         if item[1] == 1:
             shutil.copy(item[0], os.path.join(path, to))
         elif item[1] == 2:
-            shutil.move(item[0], os.path.join(path, to))
-            pass
+            rename(request, item[0], os.path.join(path, to))
     clearBuffer(request)
     return HttpResponseRedirect('/fm/list/%s' % path)
 past = permission_required('fileman.can_fm_rename')(past)

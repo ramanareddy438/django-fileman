@@ -2,17 +2,17 @@
 
 from django.db import models
 from django.contrib.auth.models import User
-from blog.fields import AutoOneToOneField
+from fileman.fields import AutoOneToOneField
 
-ACTIONS = {"add": "Загрузка файла %s",
-    "rename": "Переименование файла %s в %s",
-    "delete": "Перемещение в корзину файла %s",
-    "destruction": "Удаление файла %s"}
+ACTIONS = {"add": u"Загрузка файла %s",
+    "rename": u"Переименование файла %s в %s",
+    "delete": u"Перемещение в корзину файла %s",
+    "destraction": u"Удаление файла %s"}
 
 class Setting(models.Model):
     owner = AutoOneToOneField(User, related_name='fileman_Setting')
-    root = models.CharField(maxlength=250, null=True)
-    home = models.CharField(maxlength=250, null=True)
+    root = models.CharField(max_length=250, null=True)
+    home = models.CharField(max_length=250, null=True)
     buffer = models.TextField(blank=True)
     class Admin:
         pass
@@ -25,7 +25,7 @@ class Setting(models.Model):
             ("can_fm_destruct", "Can delete files"),
         )
     def __unicode__(self):
-        return str(self.owner)
+        return self.owner
     def __init__(self, *args, **kwargs):
         super(Setting, self).__init__(*args, **kwargs)
         if not self.root:
@@ -37,18 +37,23 @@ class Setting(models.Model):
             
         
 class History(models.Model):
-    action = models.CharField(maxlength=250)
+    action = models.CharField(max_length=250)
     author = models.ForeignKey(User)
     date = models.DateTimeField(auto_now_add=True)
     class Admin:
-        pass
+        list_display = ('action', 'author')
+        list_filter = ('date',)
+    class Meta:
+        verbose_name_plural = "History"
     def __unicode__(self):
-        return str(self.action)
+        return self.action
     
 class Alias(models.Model):
-    path = models.CharField(maxlength=250)
-    url = models.CharField(maxlength=250)
+    path = models.CharField(max_length=250)
+    url = models.CharField(max_length=250)
     class Admin:
         pass
+    class Meta:
+        verbose_name_plural = "Alias"
     def __unicode__(self):
-        return str(self.url)
+        return self.url
