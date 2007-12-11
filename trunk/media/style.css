@@ -31,7 +31,7 @@ a img {
 
 #pwd {
 	margin: 10px 0 10px 0;
-	background:#7CA0C7 url(/amedia/img/admin/default-bg.gif) repeat-x scroll left top;
+	background:#7CA0C7 url(/fm/media/default-bg.gif) repeat-x scroll left top;
 	border: 1px solid #ccc;
 	color: #fff;
 	font-size: 13px;
@@ -52,7 +52,7 @@ a img {
 }
 
 #sidebar .block h2 {
-	background:#7CA0C7 url(/amedia/img/admin/default-bg.gif) repeat-x scroll left top;
+	background:#7CA0C7 url(/fm/media/default-bg.gif) repeat-x scroll left top;
 	margin:0;
 	padding:2px;;
 	text-align:center;

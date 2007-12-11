@@ -33,4 +33,5 @@ class UploadForm:
             f = open(os.path.join(self.path, file['filename']), 'w')
             f.write(file['content'])
             f.close()
+            createHistory(request.user, "add", os.path.join(self.path, file['filename']))
         return True
