@@ -4,10 +4,12 @@ from django.db import models
 from django.contrib.auth.models import User
 from fileman.fields import AutoOneToOneField
 
-ACTIONS = {"add": u"Загрузка файла %s",
-    "rename": u"Переименование файла %s в %s",
-    "delete": u"Перемещение в корзину файла %s",
-    "destraction": u"Удаление файла %s"}
+from django.utils.translation import ugettext as _
+
+ACTIONS = {"add": _(u"Загрузка файла %s"),
+    "rename": _(u"Переименование файла %s в %s"),
+    "delete": _(u"Перемещение в корзину файла %s"),
+    "destraction": _(u"Удаление файла %s")}
 
 class Setting(models.Model):
     owner = AutoOneToOneField(User, related_name='fileman_Setting')
@@ -18,11 +20,11 @@ class Setting(models.Model):
         pass
     class Meta:
         permissions = (
-            ("can_fm_list", "Can look files list"),
-            ("can_fm_add", "Can upload files"),
-            ("can_fm_rename", "Can rename files"),
-            ("can_fm_del", "Can move files to basket"),
-            ("can_fm_destruct", "Can delete files"),
+            ("can_fm_list", _("Can look files list")),
+            ("can_fm_add", _("Can upload files")),
+            ("can_fm_rename", _("Can rename files")),
+            ("can_fm_del", _("Can move files to basket")),
+            ("can_fm_destruct", _("Can delete files")),
         )
     def __unicode__(self):
         return self.owner
