@@ -56,6 +56,7 @@ var url_removebufer = "{% url fileman.views.RemoveFromBuffer %}";
     <div class="content">
     <p>Ссылка: <input id="url" type="input"></p>
     <p><a href="#">{% trans "в буфер обмена" %}</a></p>
+    <p id="download"><a href="#">{% trans "скачать" %}</a></p>
     </div>
 </div>
 {% if perms.fileman.can_fm_add %}

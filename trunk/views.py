@@ -20,24 +20,24 @@ import shutil
 
 from django.utils.translation import ugettext as _
 
+
 def raise_error(request, msg):
         return render_to_response('error.html',
                        {"msg": msg},
                         context_instance=RequestContext(request))
 
-@login_required
 def list(request, path = None):
     if request.user.fileman_Setting.home is None or request.user.fileman_Setting.root is None:
         return raise_error(request,
-            [_("Не назначена корневая или домашняя директория")])
+            [_(u"Не назначена корневая или домашняя директория")])
     if path is None:
         path = request.user.fileman_Setting.home
     if not os.path.exists(path):
         return raise_error(request,
-            [_("Несуществующий путь")])
+            [_(u"Несуществующий путь")])
     if re.search("^%s" % request.user.fileman_Setting.root, path) is None:
         return raise_error(request,
-            [_("Нет доступа")])
+            [_(u"Нет доступа")])
         
     dirlist = []
     filelist = []
@@ -65,14 +65,14 @@ def list(request, path = None):
             },
             context_instance=RequestContext(request))
 list = permission_required('fileman.can_fm_list')(list)
-        
+    
 @login_required
 def upload(request):
     if request.POST:
         post_data = request.POST.copy()
         if re.search("^%s" % request.user.fileman_Setting.root, post_data['path']) is None:
             return raise_error(request,
-                [_("Нет доступа")])
+                [_(u"Нет доступа")])
         post_data.update(request.FILES)
         form = UploadForm(post_data)
         print 1
@@ -84,16 +84,16 @@ def upload(request):
                 [form.errors])
     else:
         return raise_error(request,
-                [_("Пустая форма")])
+                [_(u"Пустая форма")])
 upload = permission_required('fileman.can_fm_add')(upload)
     
 @login_required
 def preview(request, path = None):
     if path is None:
-        return HttpResponse(_("Не указан путь."))
+        return HttpResponse(_(u"Не указан путь."))
     if re.search("^%s" % request.user.fileman_Setting.root, path) is None:
         return raise_error(request,
-            [_("Нет доступа")])
+            [_(u"Нет доступа")])
     from PIL import Image
     size = 176, 176
     im = Image.open(path)
@@ -105,14 +105,14 @@ def preview(request, path = None):
 @login_required
 def getUrl(request, path = None):
     if path is None:
-        return HttpResponse(_("Не указан путь."))
+        return HttpResponse(_(u"Не указан путь."))
     if re.search("^%s" % request.user.fileman_Setting.root, path) is None:
         return raise_error(request,
-                [_("Нет доступа")])
+                [_(u"Нет доступа")])
     for alias in Alias.objects.all():
         if path.startswith(alias.path):
             return HttpResponse(path.replace(alias.path, alias.url))
-    return HttpResponse(_("Нет доступа из вне"))
+    return HttpResponse(_(u"Нет доступа из вне"))
     
 @login_required
 def delete(request):
@@ -124,7 +124,7 @@ def delete(request):
         for key in request.POST.keys():
             if re.search("^%s" % request.user.fileman_Setting.root, request.POST[key]) is None:
                 return raise_error(request,
-                    [_("Нет доступа")])
+                    [_(u"Нет доступа")])
             try:
                 os.rename(request.POST[key], "%s/%s" % (BASKET_FOLDER, os.path.split(request.POST[key])[1]))
             except Exception, msg:
@@ -138,7 +138,7 @@ def delete(request):
         return HttpResponseRedirect('/fm/list/%s' % path)
     else:
         return raise_error(request,
-            [_("Пустая форма")])
+            [_(u"Пустая форма")])
 delete = permission_required('fileman.can_fm_del')(delete)
                 
 @login_required
@@ -151,7 +151,7 @@ def destraction(request):
         for key in request.POST.keys():
             if re.search("^%s" % request.user.fileman_Setting.root, request.POST[key]) is None:
                 return raise_error(request,
-                    [_("Нет доступа")])
+                    [_(u"Нет доступа")])
             if os.path.isdir(request.POST[key]):
                 try:
                     rmdir(request.POST[key])
@@ -174,14 +174,14 @@ def destraction(request):
         return HttpResponseRedirect('/fm/list/%s' % path)
     else:
         return raise_error(request,
-            [_("Пустая форма")])
+            [_(u"Пустая форма")])
 destraction = permission_required('fileman.can_fm_destruct')(destraction)
                 
 @login_required
 def rmdir(path):
     if re.search("^%s" % request.user.fileman_Setting.root, path) is None:
         return raise_error(request,
-            [_("Нет доступа")])
+            [_(u"Нет доступа")])
     for f in os.listdir(path):
         if os.path.isdir(os.path.join(path, f)):
             rmdir(os.path.join(path, f))
@@ -204,11 +204,11 @@ def rename(request, source = None, dest = None):
             for key in request.POST.keys():
                 if re.search("^%s" % request.user.fileman_Setting.root, request.POST[key]) is None:
                     return raise_error(request,
-                        [_("Нет доступа")])
+                        [_(u"Нет доступа")])
             return HttpResponseRedirect('/fm/list/%s' % path)
         else:
             return raise_error(request,
-                [_("Пустая форма")])
+                [_(u"Пустая форма")])
     else:
         shutil.move(source, dest)
         createHistory(request.user, "rename", source, dest)
@@ -217,7 +217,7 @@ rename = permission_required('fileman.can_fm_rename')(rename)
 @login_required
 def createDir(request, path = None):
     if path is None:
-        return HttpResponse(_("Не указан путь."))
+        return HttpResponse(_(u"Не указан путь."))
     os.mkdir(path)
     return HttpResponseRedirect('/fm/list/%s' % path)
 createDir = permission_required('fileman.can_fm_add')(createDir)
@@ -228,7 +228,7 @@ def addBuffer(request):
         path = request.POST['path']
         if re.search("^%s" % request.user.fileman_Setting.root, path) is None:
             return raise_error(request,
-                    [_("Нет доступа")])
+                    [_(u"Нет доступа")])
         if request.POST['action'] == "copy":
             action = 1
         elif request.POST['action'] == "cut":
@@ -241,9 +241,9 @@ def addBuffer(request):
             return HttpResponse("success")
     else:
         return raise_error(request,
-            [_("Пустая форма")])
+            [_(u"Пустая форма")])
                 
-@login_required
+
 def listBuffer(request):
     if request.user.fileman_Setting.buffer != "":
         buffer = pickle.loads(request.user.fileman_Setting.buffer.encode("utf8"))
@@ -258,10 +258,10 @@ def clearBuffer(request):
 @login_required
 def past(request, path = None):
     if path is None:
-        return HttpResponse(_("Не указан путь."))
+        return HttpResponse(_(u"Не указан путь."))
     if re.search("^%s" % request.user.fileman_Setting.root, path) is None:
         return raise_error(request,
-                    [_("Нет доступа")])
+                    [_(u"Нет доступа")])
     buffer = listBuffer(request)
     for item in buffer:
         to = os.path.basename(item[0])
@@ -282,10 +282,10 @@ past = permission_required('fileman.can_fm_rename')(past)
 @login_required
 def RemoveFromBuffer(request, path = None):
     if path is None:
-        return HttpResponse(_("Не указан путь."))
+        return HttpResponse(_(u"Не указан путь."))
     if re.search("^%s" % request.user.fileman_Setting.root, path) is None:
         return raise_error(request,
-                    [_("Нет доступа")])
+                    [_(u"Нет доступа")])
     buffer =  listBuffer(request)
     if [path, 1] in buffer:
         buffer.remove([path, 1])
