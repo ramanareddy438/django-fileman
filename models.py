@@ -27,7 +27,7 @@ class Setting(models.Model):
             ("can_fm_destruct", _("Can delete files")),
         )
     def __unicode__(self):
-        return self.owner
+        return unicode(self.owner)
     def __init__(self, *args, **kwargs):
         super(Setting, self).__init__(*args, **kwargs)
         if not self.root:

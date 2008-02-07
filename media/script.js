@@ -12,6 +12,7 @@ function preview(path){
 function fileClick(name){
     path = pwd+"/"+name;
     $.get(url_geturl+path, {}, onSuccessUrl);
+    $(".info > .content").show();
     t = name.substr(-4, 4)
     if(t == ".jpg"){
         preview(path);
@@ -24,6 +25,11 @@ function fileClick(name){
 
 function onSuccessUrl(obj){
     $("#url").val(obj);
+    $("#download").hide()
+    if (obj!="Нет доступа из вне"){
+        $("#download > a ").attr("href", obj);
+        $("#download").show()
+    }
 }
 $(document).ready(function(){
     $("#filelist > tbody > tr:nth-child(odd)").addClass("odd");
@@ -31,15 +37,18 @@ $(document).ready(function(){
         $(this).dblclick(function(){
             window.location=url_home+pwd+"/"+$(this).text();
         });
+    });
+
     $('.block > h2').each(function(){ $(this).click(function(){
         $('.block > .content').hide();
         $(this).parent().children(".content").toggle();
     }); });
-});
 
     $("#filelist > tbody > tr > td > .file").each(function(){
         $(this).attr("onclick", 'fileClick($(this).text())');
     });
+    
+    $("#download").hide()
 });
 
 function addFileFild(){
