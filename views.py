@@ -104,7 +104,7 @@ def view(request, path = None):
         f.close()
         return render_to_response('view_text.html',
            {"pwd": path,
-            "data": data
+            "data": file(path, "rb").read()
             },
             context_instance=RequestContext(request))
     elif ext in PICTURE_EXT:

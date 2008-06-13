@@ -26,9 +26,9 @@
 {% if perms.fileman.can_fm_list %}
 <div id="pwd"><b>{% trans "File:" %}</b> {{ pwd }}</div>
 <div id="content">
-{% for line in data %}
-    {{ line }}<br>
-{% endfor %}
+<pre>
+{{ data }}
+</pre>
 </div>
 {% endif %}
 </div>
