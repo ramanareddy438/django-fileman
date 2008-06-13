@@ -3,6 +3,8 @@
 from django import newforms as forms
 import os.path
 
+from django.utils.translation import ugettext as _
+
 class UploadForm:
     def __init__(self, data):
         self.errors = []
@@ -20,9 +22,9 @@ class UploadForm:
         
     def is_valid(self):
         if self.path is None:
-            errors.append("Не указан путь")
+            self.errors.append(_(u"Path does not set."))
         if len(self.files) == 0:
-            errors.append("Нет файлов")
+            self.errors.append(_(u"No files"))
         if len(self.errors) > 0:
             return False
         else:

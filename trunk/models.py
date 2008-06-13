@@ -6,10 +6,10 @@ from fileman.fields import AutoOneToOneField
 
 from django.utils.translation import ugettext as _
 
-ACTIONS = {"add": _(u"Загрузка файла %s"),
-    "rename": _(u"Переименование файла %s в %s"),
-    "delete": _(u"Перемещение в корзину файла %s"),
-    "destraction": _(u"Удаление файла %s")}
+ACTIONS = {"add": _(u"Upload file %s"),
+    "rename": u"Rename file %s to %s",
+    "delete": _(u"Delete file %s"),
+    "destraction": _(u"Destroy file %s")}
 
 class Setting(models.Model):
     owner = AutoOneToOneField(User, related_name='fileman_Setting')
@@ -43,7 +43,7 @@ class History(models.Model):
     author = models.ForeignKey(User)
     date = models.DateTimeField(auto_now_add=True)
     class Admin:
-        list_display = ('action', 'author')
+        list_display = ('action', 'date', 'author')
         list_filter = ('date',)
     class Meta:
         verbose_name_plural = "History"
