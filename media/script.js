@@ -26,7 +26,7 @@ function fileClick(name){
 function onSuccessUrl(obj){
     $("#url").val(obj);
     $("#download").hide()
-    if (obj!="Нет доступа из вне"){
+    if (obj!="No access."){
         $("#download > a ").attr("href", obj);
         $("#download").show()
     }
@@ -36,6 +36,11 @@ $(document).ready(function(){
     $("#filelist > tbody > tr > td > .dir").each(function(){
         $(this).dblclick(function(){
             window.location=url_home+pwd+"/"+$(this).text();
+        });
+    });
+    $("#filelist > tbody > tr > td > .file").each(function(){
+        $(this).dblclick(function(){
+            window.location=url_view+pwd+"/"+$(this).text();
         });
     });
 
@@ -57,13 +62,19 @@ function addFileFild(){
 }
 
 function del(){
-    $("#fileListForm").attr("action", url_delete+"?next="+pwd);
-    $("#fileListForm").submit();
+    if(confirm("Вы уверены, что хотите удалить отмеченные файлы?")){
+        $("#fileListForm").attr("action", url_delete+"?next="+pwd);
+        $("#fileListForm").submit();
+    }
+    return 0;
 }
 
 function dest(){
-    $("#fileListForm").attr("action", url_destraction+"?next="+pwd);
-    $("#fileListForm").submit();
+    if(confirm("Внимание! Операция не обратима!\nВы уверены, что хотите уничтожить отмеченные файлы?")){
+        $("#fileListForm").attr("action", url_destraction+"?next="+pwd);
+        $("#fileListForm").submit();
+    }
+    return 0;
 }
 
 function createDir(){
@@ -119,7 +130,7 @@ function del_one(element, filename, filepath){
     currentE = $(element).parent();
     if(confirm("Вы уверены, что хотите удалить "+filename+"?")){
         $(element).parent().html("<img src='"+url_media+"/ajax-loader.gif'>");
-        $.post(url_delete+"?xhr", {filename: filepath}, successDelete);
+        $.get(url_delete+filepath+"?xhr", successDelete)
     }
     return 0;
 }
@@ -140,7 +151,7 @@ function dest_one(element, filename, filepath){
     currentE = $(element).parent();
     if(confirm("Внимание! Операция не обратима!\nВы уверены, что хотите уничтожить "+filename+"?")){
         $(element).parent().html("<img src='"+url_media+"/ajax-loader.gif'>");
-        $.post(url_destraction+"?xhr", {filename: filepath}, successDelete);
+        $.get(url_destraction+filepath+"?xhr", successDelete);
     }
     return 0;
 }
