@@ -5,6 +5,7 @@
 <title>File Manager</title>
 <link rel='stylesheet' href='{{ fileman_media_url }}/style.css' type='text/css'>
 <script type="text/javascript" src="{{ fileman_media_url }}/jquery.js"></script>
+<script type="text/javascript" src="{{ fileman_media_url }}/jquery.clipboard.js"></script>
 <script>
 var pwd = "{{ pwd }}";
 var url_media = "{{ fileman_media_url }}";
@@ -58,7 +59,7 @@ var url_removebuffer = "{% url fileman.views.RemoveFromBuffer %}";
 <h2>{% trans "Info" %}</h2>
     <div class="content">
     <p>{% trans "Link" %}: <input id="url" type="input"></p>
-    <p><a href="#">{% trans "copy to buffer" %}</a></p>
+    <p><a href="#" id="clipboard">{% trans "copy to clipboard" %}</a></p>
     <p id="download"><a href="#">{% trans "download" %}</a></p>
     </div>
 </div>
@@ -67,8 +68,8 @@ var url_removebuffer = "{% url fileman.views.RemoveFromBuffer %}";
 <h2>{% trans "Upload" %}</h2>
     <div class="content">
     <form id="uploadForm" action="{% url fileman.views.upload %}" method="post" enctype="multipart/form-data">
-    <p><input type="file" name="ufile1" size="16"></p>
-    <p id="addFileFild"><a href="javascript:addFileFild()">{% trans "add" %}</a></p>
+    <p><input type="file" name="ufile1" size="10"></p>
+    <p id="addFileFild"><a href="#" onclick="return addFileFild();">{% trans "add" %}</a></p>
     <p><input type="hidden" name="path" value="{{ pwd }}">
     <input type="submit" value="{% trans 'Upload!' %}"></p>
     </form>

@@ -1,6 +1,5 @@
 var ufile = 1;
 var currentE = null;
-var temp_string = null;
 
 function preview(path){
     $(".preview > .content > p").html("<img src='"+url_preview+path+"'>");
@@ -11,7 +10,7 @@ function preview(path){
 
 function fileClick(name){
     path = pwd+"/"+name;
-    $.get(url_geturl+path, {}, onSuccessUrl);
+    $.get(url_geturl+path, {}, onSuccessUrl, "json");
     $(".info > .content").show();
     t = name.substr(-4, 4)
     if(t == ".jpg"){
@@ -23,12 +22,19 @@ function fileClick(name){
     }
 }
 
-function onSuccessUrl(obj){
-    $("#url").val(obj);
-    $("#download").hide()
-    if (obj!="No access."){
-        $("#download > a ").attr("href", obj);
+function onSuccessUrl(data){
+    if(data.status=="success"){
+        $("#url").val(data.url);
+        $("#clipboard").removeAttr("disabled");
+        $("#clipboard").click(function(){ $.clipboard(data.url); });
+        $("#download > a ").attr("href", data.url);
+        $("#clipboard").show();
         $("#download").show()
+    }
+    else {
+        $("#url").val("No access.");
+        $("#clipboard").hide(); 
+        $("#download").hide()
     }
     return 0;
 }
@@ -54,12 +60,15 @@ $(document).ready(function(){
         $(this).attr("onclick", 'fileClick($(this).text())');
     });
     
-    $("#download").hide()
+    $("#download").hide();
+    $("#clipboard").hide();
+    
+    $.clipboardReady(function(){}, { swfpath: url_media+"/jquery.clipboard.swf" });
 });
 
 function addFileFild(){
     ufile = ufile+1;
-    $("#addFileFild").before('<p><input type="file" name="ufile'+ufile+'" size="16"></p>');
+    $("#addFileFild").before('<p><input type="file" name="ufile'+ufile+'" size="10"></p>');
     return 0;
 }
 
@@ -114,7 +123,6 @@ function successCopy(data){
 
 function cut_one(element, filename, filepath){
     currentE = $(element).parent();
-    temp_string = filepath;
     $(element).parent().html("<img src='"+url_media+"/ajax-loader.gif'>");
     $.post(url_addbufer, {'path': filepath, 'action': "cut"}, successCut, "json");
     $('.buffer > h2').click();
