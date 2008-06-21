@@ -16,7 +16,7 @@ var url_delete = "{% url fileman.views.delete2 %}";
 var url_destraction = "{% url fileman.views.destraction2 %}";
 var url_createdir = "{% url fileman.views.createDir %}";
 var url_addbufer = "{% url fileman.views.addBuffer %}";
-var url_removebufer = "{% url fileman.views.RemoveFromBuffer %}";
+var url_removebuffer = "{% url fileman.views.RemoveFromBuffer %}";
 </script>
 <script type="text/javascript" src="{{ fileman_media_url }}/script.js"></script>
 </head>
@@ -41,14 +41,16 @@ var url_removebufer = "{% url fileman.views.RemoveFromBuffer %}";
     <div class="content">
     {% if  buffer %}
     {% for file, action, name in buffer %}
-        <p>{% ifequal action 1 %}<img src="{{ fileman_media_url }}/page_white_copy.png">{% endifequal %}
+        <div>{% ifequal action 1 %}<img src="{{ fileman_media_url }}/page_white_copy.png">{% endifequal %}
         {% ifequal action 2 %}<img src="{{ fileman_media_url }}/cut.png">{% endifequal %}
         {{ name }}
-        <a href="{% url fileman.views.RemoveFromBuffer %}{{ file }}"><img src="{{ fileman_media_url }}/cross.png"></a>
-        </p>
+        <a href="#" onclick="return RemoveFromBuffer(this, '{{ file }}');"><img src="{{ fileman_media_url }}/cross.png"></a>
+        </div>
     {% endfor %}
     {% else %}
-    Буфер пуст.
+    <div id="clearBuffer">
+        Буфер пуст.
+    </div>
     {% endif %}
     </div>
 </div>
@@ -126,7 +128,7 @@ var url_removebufer = "{% url fileman.views.RemoveFromBuffer %}";
 {% endif %}
 {% if perms.fileman.can_fm_rename %}
 <td width="18px">
-    <a href="#" title="{% trans 'Rename' %}"><img src="{{ fileman_media_url }}/pencil.png" alt="{% trans 'Rename' %}"></a>
+    <a href="#" onclick="return rename(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Rename' %}"><img src="{{ fileman_media_url }}/pencil.png" alt="{% trans 'Rename' %}"></a>
 </td>
 {% endif %}
 {% if perms.fileman.can_fm_del %}
