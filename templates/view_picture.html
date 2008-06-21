@@ -16,8 +16,8 @@
     {% if perms.fileman.can_fm_del %}<p><a href="{% url fileman.views.listBasket %}"><img src="{{ fileman_media_url }}/bin.png"> {% trans "Recycle Bin" %}</a></p>{% endif %}
     <br>
     <p><a href="{% url fileman.views.download pwd %}"><img src="{{ fileman_media_url }}/download.gif"> {% trans "Download" %}</a></p>
-    {% if perms.fileman.can_fm_del %}<p><a href="javascript:del();"><img src="{{ fileman_media_url }}/delete.png"> {% trans "Delete" %}</a></p>{% endif %}
-    {% if perms.fileman.can_fm_destruct %}<p><a href="javascript:dest();"><img src="{{ fileman_media_url }}/cross.png"> {% trans "Destroy" %}</a></p>{% endif %}
+    {% if perms.fileman.can_fm_del %}<p><a href="{% url fileman.views.delete pwd %}"><img src="{{ fileman_media_url }}/delete.png"> {% trans "Delete" %}</a></p>{% endif %}
+    {% if perms.fileman.can_fm_destruct %}<p><a href="{% url fileman.views.destraction pwd %}"><img src="{{ fileman_media_url }}/cross.png"> {% trans "Destroy" %}</a></p>{% endif %}
     </div>
 </div>
 </div>

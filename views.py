@@ -263,7 +263,7 @@ def addBuffer(request):
             buffer.append([path, action])
         request.user.fileman_Setting.writeBuffer(pickle.dumps(buffer))
         if request.is_ajax():
-            return json({"status": "success"})
+            return json({"status": "success", "path": path})
         return ls(request)
     else:
         return raise_error(request,
@@ -302,7 +302,7 @@ past = permission_required('fileman.can_fm_rename')(past)
 
 @rightPath
 def RemoveFromBuffer(request, path = None):
-    buffer =  listBuffer(request)
+    buffer = listBuffer(request)
     if [path, 1] in buffer:
         buffer.remove([path, 1])
     elif [path, 2] in buffer:
