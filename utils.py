@@ -54,3 +54,4 @@ class Fmoper:
             return shutil.rmtree(path)
         else:
             return os.remove(path)
+

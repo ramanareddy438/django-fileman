@@ -88,13 +88,13 @@ function copy_one(element, filename, filepath){
     currentE = $(element).parent();
     temp_string = filepath;
     $(element).parent().html("<img src='"+url_media+"/ajax-loader.gif'>");
-    $.post(url_addbufer+"?xhr", {'path': filepath, 'action': "copy"}, successCopy);
+    $.post(url_addbufer+"?xhr", {'path': filepath, 'action': "copy"}, successCopy, "json");
     $('.buffer > h2').click();
     return 0;
 }
 
 function successCopy(data){
-    if(data=="success"){
+    if(data.status=="success"){
         currentE.html('<img src="'+url_media+'/page_white_copy.png" alt="Копировать">');
         $(".buffer > h2").after('<p><img src="'+url_media+'/page_white_copy.png">'+nameFromPath(temp_string)+' <a href="'+url_removebufer+temp_string+'"><img src="'+url_media+'/cross.png"></a></p>');
     }
@@ -107,13 +107,13 @@ function cut_one(element, filename, filepath){
     currentE = $(element).parent();
     temp_string = filepath;
     $(element).parent().html("<img src='"+url_media+"/ajax-loader.gif'>");
-    $.post(url_addbufer+"?xhr", {'path': filepath, 'action': "cut"}, successCut);
+    $.post(url_addbufer, {'path': filepath, 'action': "cut"}, successCut, "json");
     $('.buffer > h2').click();
     return 0;
 }
 
 function successCut(data){
-    if(data=="success"){
+    if(data.status=="success"){
         currentE.html('<img src="'+url_media+'/cut.png" alt="Вырезать">');
         $(".buffer > h2").after('<p><img src="'+url_media+'/cut.png">'+nameFromPath(temp_string)+' <a href="'+url_removebufer+temp_string+'"><img src="'+url_media+'/cross.png"></a></p>');
     }
@@ -122,21 +122,37 @@ function successCut(data){
     }
 }
 
-function rename(file){
-    prompt("Переименовать", file);
+function rename(element, filename, path){
+    currentE = $(element).parent();
+    name2 = prompt("Переименовать", filename);
+    if (name2 == false || name2 == null || name2.length == 0|| name2 == filename) {
+        return 0;
+    }
+    $(element).parent().html("<img src='"+url_media+"/ajax-loader.gif'>");
+    $.get(url_home+"../rename/"+path, {'newname': name2}, successRename, "json");
+}
+
+function successRename(data){
+    if(data.status=="success"){
+        currentE.html('<img src="'+url_media+'/pencil.png" alt="Переименовать">');
+        $(currentE.parent().children()[0]).children("label").text(data.name)
+    }
+    else {
+        alert("Произошла ошибка.\nСервер сообщает:\n"+data);
+    }
 }
 
 function del_one(element, filename, filepath){
     currentE = $(element).parent();
     if(confirm("Вы уверены, что хотите удалить "+filename+"?")){
         $(element).parent().html("<img src='"+url_media+"/ajax-loader.gif'>");
-        $.get(url_delete+filepath+"?xhr", successDelete)
+        $.get(url_delete+filepath, {}, successDelete, "json")
     }
     return 0;
 }
 
 function successDelete(data){
-    if(data=="success"){
+    if(data.status=="success"){
         currentE.parent().fadeOut("slow", function(){ 
         currentE.parent().remove();
         $("#filelist > tbody > tr:nth-child(odd)").addClass("odd");
@@ -151,7 +167,7 @@ function dest_one(element, filename, filepath){
     currentE = $(element).parent();
     if(confirm("Внимание! Операция не обратима!\nВы уверены, что хотите уничтожить "+filename+"?")){
         $(element).parent().html("<img src='"+url_media+"/ajax-loader.gif'>");
-        $.get(url_destraction+filepath+"?xhr", successDelete);
+        $.get(url_destraction+filepath, {}, successDelete, "json");
     }
     return 0;
 }

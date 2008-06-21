@@ -20,6 +20,7 @@ import os, mimetypes, shutil
 import pickle, re
 import operator
 from fileman.utils import Fmoper
+from django.utils import simplejson
 # import internationalization
 from django.utils.translation import ugettext as _
 
@@ -32,7 +33,8 @@ def rightPath(fn):
         if "path" in kw:
             path = kw["path"]
             if path is None:
-                return HttpResponse(_(u"Path does not set."))
+                return raise_error(request,
+                    [_(u"Path does not set.")])
             if re.search("^%s" % request.user.fileman_Setting.root, path) is None:
                 return raise_error(request,
                     [_(u"No access")])
@@ -44,9 +46,21 @@ def rightPath(fn):
 
 ###                 Render                  ###
 def raise_error(request, msg):
-        return render_to_response('error.html',
-                       {"msg": msg},
-                        context_instance=RequestContext(request))
+    if request.is_ajax():
+        return json({'status': "error", "msg": msg})
+    return render_to_response('error.html',
+               {"msg": msg},
+                context_instance=RequestContext(request))
+                
+def json(data = None):
+    if data is None:
+        data = {}
+    if not type(data) == type(dict()):
+        raise Exception('ajax TypeError')
+    if 'status' not in data:
+        data['status'] = "success"
+    json = simplejson.dumps(data)
+    return HttpResponse(json, mimetype='application/json')
 
 def ls(request, path = None):
     """ Render file list """
@@ -141,13 +155,10 @@ def delete(request, path, inside = False):
     try:
         fmoper.move(path, "%s/%s" % (BASKET_FOLDER, os.path.basename(path)))
     except Exception, msg:
-        if request.is_ajax():
-            return HttpResponse(msg)
-        else:
-            return raise_error(request, [msg])
+        return raise_error(request, [msg])
     createHistory(request.user, "delete", path)
     if request.is_ajax():
-        return HttpResponse("success")
+        return json({"status": "success"})
     else:
         return ls(request, os.path.dirname(path))
 delete = permission_required('fileman.can_fm_del')(delete)
@@ -155,20 +166,18 @@ delete = permission_required('fileman.can_fm_del')(delete)
 def delete2(request):
     if request.POST:
         if request.GET.has_key('next'):
-            path = request.GET['next']
+            next = request.GET['next']
         else:
-            path = ''
+            next = ''
         for key in request.POST.keys():
             try:
                 fmoper.move(request.POST[key], "%s/%s" % (BASKET_FOLDER, os.path.basename(request.POST[key])))
             except Exception, msg:
-                if request.is_ajax():
-                    return HttpResponse(msg)
                 return raise_error(request, [msg])
             createHistory(request.user, "destraction", request.POST[key])
         if request.is_ajax():
-            return HttpResponse("success")
-        return HttpResponseRedirect('/fm/list/%s' % path)
+            return json({"status": "success"})
+        return HttpResponseRedirect('/fm/list/%s' % next)
     else:
         return raise_error(request,
             [_(u"Empty form.")])
@@ -179,13 +188,10 @@ def destraction(request, path):
     try:
         fmoper.remove(path)
     except Exception, msg:
-        if request.is_ajax():
-            return HttpResponse(msg)
-        else:
             return raise_error(request, [msg])  
     createHistory(request.user, "destraction", path)  
     if request.is_ajax():
-        return HttpResponse("success")
+        return json({"status": "success"})
     else:
         return ls(request, os.path.dirname(path))
 destraction = permission_required('fileman.can_fm_destruct')(destraction)
@@ -193,46 +199,44 @@ destraction = permission_required('fileman.can_fm_destruct')(destraction)
 def destraction2(request):
     if request.POST:
         if request.GET.has_key('next'):
-            path = request.GET['next']
+            next = request.GET['next']
         else:
-            path = ''
+            next = ''
         for key in request.POST.keys():
             try:
                 fmoper.remove(request.POST[key])
             except Exception, msg:
-                if request.is_ajax():
-                    return HttpResponse(msg)
                 return raise_error(request, [msg])
             createHistory(request.user, "destraction", request.POST[key])
         if request.is_ajax():
-            return HttpResponse("success")
-        return HttpResponseRedirect('/fm/list/%s' % path)
+            return json({"status": "success"})
+        return HttpResponseRedirect('/fm/list/%s' % next)
     else:
         return raise_error(request,
             [_(u"Empty form.")])
 destraction2 = permission_required('fileman.can_fm_destruct')(destraction2)
-                
-def move(request):
-    pass
 
-def rename(request, source = None, dest = None):
-    if (source is None) and (dest is None):
-        if request.POST:
-            if request.GET.has_key('next'):
-                path = request.GET['next']
-            else:
-                path = ''
-            for key in request.POST.keys():
-                if re.search("^%s" % request.user.fileman_Setting.root, request.POST[key]) is None:
-                    return raise_error(request,
-                        [_(u"No access")])
-            return HttpResponseRedirect('/fm/list/%s' % path)
+@rightPath
+def rename(request, path = None, newName = None):
+    if path is None:
+        return raise_error(request,
+                [_(u"Input error")])
+    if newName is None:
+        if request.GET.has_key('newname'):
+            newName = request.GET['newname']
         else:
             return raise_error(request,
-                [_(u"Empty form.")])
+                    [_(u"Input error")])
+    dest = os.path.join(os.path.dirname(path), newName)
+    fmoper.move(path, dest)
+    createHistory(request.user, "rename", path, dest)
+    if request.GET.has_key('next'):
+        next = request.GET['next']
     else:
-        fmoper.move(source, dest)
-        createHistory(request.user, "rename", source, dest)
+        next = ''
+    if request.is_ajax():
+        return json({"status": "success", "name": newName})
+    return HttpResponseRedirect('/fm/list/%s' % next)
 rename = permission_required('fileman.can_fm_rename')(rename)
                 
 def createDir(request, path = None):
@@ -259,7 +263,7 @@ def addBuffer(request):
             buffer.append([path, action])
         request.user.fileman_Setting.writeBuffer(pickle.dumps(buffer))
         if request.is_ajax():
-            return HttpResponse("success")
+            return json({"status": "success"})
         return ls(request)
     else:
         return raise_error(request,
@@ -304,7 +308,7 @@ def RemoveFromBuffer(request, path = None):
     elif [path, 2] in buffer:
         buffer.remove([path, 2])
     request.user.fileman_Setting.writeBuffer(pickle.dumps(buffer))
-    return HttpResponse("success")
+    return json({"status": "success"})
     
 ###                  Others                 ###
 @rightPath
