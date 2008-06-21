@@ -160,7 +160,7 @@ var url_removebufer = "{% url fileman.views.RemoveFromBuffer %}";
 {% endif %}
 {% if perms.fileman.can_fm_rename %}
 <td width="18px">
-    <a href="javascript:rename('{{ file.name }}');" title="{% trans 'Rename' %}"><img src="{{ fileman_media_url }}/pencil.png" alt="{% trans 'Rename' %}"></a>
+    <a href="#" onclick="return rename(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Rename' %}"><img src="{{ fileman_media_url }}/pencil.png" alt="{% trans 'Rename' %}"></a>
 </td>
 {% endif %}
 {% if perms.fileman.can_fm_del %}
