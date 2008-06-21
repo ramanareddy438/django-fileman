@@ -325,7 +325,12 @@ preview = permission_required('fileman.can_fm_list')(preview)
 def getUrl(request, path = None):
     for alias in Alias.objects.all():
         if path.startswith(alias.path):
-            return HttpResponse(path.replace(alias.path, alias.url))
+            url = path.replace(alias.path, alias.url)
+            if request.is_ajax():
+                return json({"status": "success", "url": url})
+            return HttpResponse(url)
+    if request.is_ajax():
+        return json({"status": "error"})
     return HttpResponse(_(u"No access."))
     
 @rightPath
