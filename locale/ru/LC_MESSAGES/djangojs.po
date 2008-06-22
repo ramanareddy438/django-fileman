@@ -1,0 +1,66 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-06-22 12:04+0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: media/script.js:35
+msgid "No access."
+msgstr "Нет доступа."
+
+#: media/script.js:76
+msgid "Are you sure you want to delete selected files?"
+msgstr "Вы уверены, что хотите удалить выделенные файлы?"
+
+#: media/script.js:84
+msgid ""
+"Attention! The operation is not reversible! \n"
+"Are you sure you want to destroy the marked files?"
+msgstr ""
+
+#: media/script.js:92
+msgid "Create directory:"
+msgstr "Создать директорию:"
+
+#: media/script.js:111
+msgid "Copy"
+msgstr "Копировать"
+
+#: media/script.js:119 media/script.js.py:143 media/script.js.py:165
+#: media/script.js:188 media/script.js.py:216
+msgid ""
+"Error.\n"
+"Server reports:\n"
+msgstr ""
+"Произошла ошибка.\n"
+"Сервер сообщает:\n"
+
+#: media/script.js:135
+msgid "Cut"
+msgstr "Вырезать"
+
+#: media/script.js:150 media/script.js.py:161
+msgid "Rename"
+msgstr "Переименовать"
+
+#: media/script.js:172
+msgid "Are you sure you want to delete "
+msgstr "Вы уверены, что хотите удалить "
+
+#: media/script.js:195
+msgid ""
+"Attention! The operation is not reversible! \n"
+"Are you sure you want to destroy "
+msgstr ""

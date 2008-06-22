@@ -2,7 +2,13 @@ from django.conf.urls.defaults import *
 from fileman import views
 import fileman.settings as settings
 
+js_info_dict = {
+    'packages': ('fileman.script',),
+}
+
 urlpatterns = patterns('',
+    (r'^media/jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
+
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     (r'^list/$', views.ls),
     (r'^list/(?P<path>.+)/$', views.ls),
