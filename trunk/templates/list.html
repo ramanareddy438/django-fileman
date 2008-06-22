@@ -30,12 +30,12 @@ var url_removebuffer = "{% url fileman.views.RemoveFromBuffer %}";
     <div class="content">
     <p><img src="{{ fileman_media_url }}/user.gif"> {{ user }} <a href="#">[ {% trans "Exit" %} ]</a></p><br>
     <p><a href="{% url fileman.views.ls %}"><img src="{{ fileman_media_url }}/house.png"> {% trans "Home directory" %}</a></p>
-    {% if perms.fileman.can_fm_add %}<p><a href="javascript:createDir();"><img src="{{ fileman_media_url }}/folder_add.png"> {% trans "Create directory" %}</a></p>{% endif %}
+    {% if perms.fileman.can_fm_add %}<p><a href="#" onclick="return createDir();"><img src="{{ fileman_media_url }}/folder_add.png"> {% trans "Create directory" %}</a></p>{% endif %}
     {% if perms.fileman.can_fm_add %}<p><a href="{% url fileman.views.past %}{{ pwd }}"><img src="{{ fileman_media_url }}/page_white_paste.png"> {% trans "Past" %}</a></p>{% endif %}
     {% if perms.fileman.can_fm_del %}<p><a href="{% url fileman.views.listBasket %}"><img src="{{ fileman_media_url }}/bin.png"> {% trans "Recycle Bin" %}</a></p>{% endif %}
     <br>
-    {% if perms.fileman.can_fm_del %}<p><a href="javascript:del();"><img src="{{ fileman_media_url }}/delete.png"> {% trans "Delete" %}</a></p>{% endif %}
-    {% if perms.fileman.can_fm_destruct %}<p><a href="javascript:dest();"><img src="{{ fileman_media_url }}/cross.png"> {% trans "Destroy" %}</a></p>{% endif %}
+    {% if perms.fileman.can_fm_del %}<p><a href="#" onclick="return del();"><img src="{{ fileman_media_url }}/delete.png"> {% trans "Delete" %}</a></p>{% endif %}
+    {% if perms.fileman.can_fm_destruct %}<p><a href="#" onclick="return dest();"><img src="{{ fileman_media_url }}/cross.png"> {% trans "Destroy" %}</a></p>{% endif %}
     </div>
 </div>
 <div class="block buffer">
