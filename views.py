@@ -261,7 +261,10 @@ def addBuffer(request):
         buffer =  listBuffer(request)
         if not [path, 1] in buffer and not [path, 2] in buffer:
             buffer.append([path, action])
-        request.user.fileman_Setting.writeBuffer(pickle.dumps(buffer))
+            request.user.fileman_Setting.writeBuffer(pickle.dumps(buffer))
+        else:
+            return raise_error(request,
+                    [_(u"File is already in buffer")])
         if request.is_ajax():
             return json({"status": "success", "path": path})
         return ls(request)

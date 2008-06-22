@@ -94,7 +94,6 @@ function createDir(){
         return 0;
     }
     window.location=url_createdir+pwd+"/"+name;
-    return 0;
 }
 
 function copy_one(element, filename, filepath){
@@ -108,7 +107,11 @@ function copy_one(element, filename, filepath){
 function successCopy(data){
     if(data.status=="success"){
         $("#clearBuffer").hide();
-        currentE.html('<img src="'+url_media+'/page_white_copy.png" alt="'+gettext("Copy")+'">');
+        currentE.html('<a href="#" ' +
+        'onclick="return copy_one(this, \''+nameFromPath(data.path)+'\', ' +
+        '\''+data.path+'\');" title="'+gettext("Copy")+'">' +
+        '<img src="'+url_media+'/page_white_copy.png" ' +
+        'alt="'+gettext("Copy")+'"></a>');
         $(".buffer > .content").after(
             '<div><img src="'+url_media+'/page_white_copy.png">'+
             nameFromPath(data.path)+
@@ -132,7 +135,10 @@ function cut_one(element, filename, filepath){
 function successCut(data){
     if(data.status=="success"){
         $("#clearBuffer").hide();
-        currentE.html('<img src="'+url_media+'/cut.png" alt="'+gettext("Cut")+'">');
+        currentE.html('<a href="#" ' +
+        'onclick="return cut_one(this, \''+nameFromPath(data.path)+'\', ' +
+        '\''+data.path+'\');" title="'+gettext("Cut")+'">' +
+        '<img src="'+url_media+'/cut.png" alt="'+gettext("Cut")+'"></a>');
         $(".buffer > .content").after(
             '<div><img src="'+url_media+'/cut.png">'+
             nameFromPath(data.path)+

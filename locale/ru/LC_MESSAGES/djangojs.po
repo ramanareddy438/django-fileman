@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-22 12:04+0600\n"
+"POT-Creation-Date: 2008-06-23 04:19+0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,17 +29,19 @@ msgid ""
 "Attention! The operation is not reversible! \n"
 "Are you sure you want to destroy the marked files?"
 msgstr ""
+"Внимание! Эта операция необратима! \n"
+"Вы уверены, что хотите уничтожить выделенные файлы?"
 
 #: media/script.js:92
 msgid "Create directory:"
 msgstr "Создать директорию:"
 
-#: media/script.js:111
+#: media/script.js:113 media/script.js.py:115
 msgid "Copy"
 msgstr "Копировать"
 
-#: media/script.js:119 media/script.js.py:143 media/script.js.py:165
-#: media/script.js:188 media/script.js.py:216
+#: media/script.js:123 media/script.js.py:147 media/script.js.py:169
+#: media/script.js:192 media/script.js.py:220
 msgid ""
 "Error.\n"
 "Server reports:\n"
@@ -47,20 +49,22 @@ msgstr ""
 "Произошла ошибка.\n"
 "Сервер сообщает:\n"
 
-#: media/script.js:135
+#: media/script.js:139
 msgid "Cut"
 msgstr "Вырезать"
 
-#: media/script.js:150 media/script.js.py:161
+#: media/script.js:154 media/script.js.py:165
 msgid "Rename"
 msgstr "Переименовать"
 
-#: media/script.js:172
+#: media/script.js:176
 msgid "Are you sure you want to delete "
 msgstr "Вы уверены, что хотите удалить "
 
-#: media/script.js:195
+#: media/script.js:199
 msgid ""
 "Attention! The operation is not reversible! \n"
 "Are you sure you want to destroy "
 msgstr ""
+"Внимание! Эта операция необратима! \n"
+"Вы уверены, что хотите уничтожить "

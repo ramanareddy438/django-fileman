@@ -3,7 +3,7 @@ from fileman import views
 import fileman.settings as settings
 
 js_info_dict = {
-    'packages': ('fileman.script',),
+    'packages': ('cyxapeff_org.fileman',),
 }
 
 urlpatterns = patterns('',
