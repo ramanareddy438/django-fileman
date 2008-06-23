@@ -25,7 +25,8 @@
     <div class="block actions">
     <h2>{% trans "Actions" %}</h2>
         <div class="content">
-        <p><img src="{{ fileman_media_url }}/user.gif"> {{ user }} <a href="#">[ {% trans "Exit" %} ]</a></p><br>
+        <p><img src="{{ fileman_media_url }}/user.gif"> {{ user }}
+        {% if not anonymous %}<a href="#">[ {% trans "Exit" %} ]</a>{% endif %}</p><br>
         <p><a href="{% url fileman.views.ls %}"><img src="{{ fileman_media_url }}/house.png"> {% trans "Home directory" %}</a></p>
         {% if perms.fileman.can_fm_add %}<p><a href="#" onclick="return createDir();"><img src="{{ fileman_media_url }}/folder_add.png"> {% trans "Create directory" %}</a></p>{% endif %}
         {% if perms.fileman.can_fm_add %}<p><a href="{% url fileman.views.past %}{{ pwd }}"><img src="{{ fileman_media_url }}/page_white_paste.png"> {% trans "Past" %}</a></p>{% endif %}
