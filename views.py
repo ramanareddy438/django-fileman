@@ -235,7 +235,7 @@ def rename(request, path = None, newName = None):
     else:
         next = ''
     if request.is_ajax():
-        return json({"status": "success", "name": newName})
+        return json({"status": "success", "path": dest})
     return HttpResponseRedirect('/fm/list/%s' % next)
 rename = permission_required('fileman.can_fm_rename')(rename)
                 

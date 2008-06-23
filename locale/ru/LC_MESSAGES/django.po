@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-23 04:20+0600\n"
+"POT-Creation-Date: 2008-06-23 12:02+0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -92,106 +92,106 @@ msgstr "Нет доступа."
 msgid "Ooops! Error!"
 msgstr "Произошла ошибка!"
 
-#: templates/list.html:29 templates/view_picture.html:12
-#: templates/view_text.html:12
+#: templates/list.html:26 templates/view_picture.html:9
+#: templates/view_text.html:18
 msgid "Actions"
 msgstr "Действия"
 
-#: templates/list.html:31 templates/view_picture.html:14
-#: templates/view_text.html:14
+#: templates/list.html:28 templates/view_picture.html:11
+#: templates/view_text.html:20
 msgid "Exit"
 msgstr "Выход"
 
-#: templates/list.html:32 templates/view_picture.html:15
-#: templates/view_text.html:15
+#: templates/list.html:29 templates/view_picture.html:12
+#: templates/view_text.html:21
 msgid "Home directory"
 msgstr "Домашняя директория"
 
-#: templates/list.html:33
+#: templates/list.html:30
 msgid "Create directory"
 msgstr "Создать директорию"
 
-#: templates/list.html:34
+#: templates/list.html:31
 msgid "Past"
 msgstr "Вставить"
 
-#: templates/list.html:35 templates/view_picture.html:16
-#: templates/view_text.html:16
+#: templates/list.html:32 templates/view_picture.html:13
+#: templates/view_text.html:22
 msgid "Recycle Bin"
 msgstr "Корзина"
 
-#: templates/list.html:37 templates/list.html.py:138 templates/list.html:172
-#: templates/view_picture.html:19 templates/view_text.html:19
+#: templates/list.html:34 templates/list.html.py:136 templates/list.html:170
+#: templates/view_picture.html:16 templates/view_text.html:25
 msgid "Delete"
 msgstr "Удалить"
 
-#: templates/list.html:38 templates/list.html.py:143 templates/list.html:177
-#: templates/view_picture.html:20 templates/view_text.html:20
+#: templates/list.html:35 templates/list.html.py:141 templates/list.html:175
+#: templates/view_picture.html:17 templates/view_text.html:26
 msgid "Destroy"
 msgstr "Уничтожить"
 
-#: templates/list.html:42
+#: templates/list.html:39
 msgid "Buffer"
 msgstr "Буфер"
 
-#: templates/list.html:60
+#: templates/list.html:57
 msgid "Info"
 msgstr "Информация"
 
-#: templates/list.html:62
+#: templates/list.html:59
 msgid "Link"
 msgstr "Ссылка"
 
-#: templates/list.html:63
+#: templates/list.html:60
 #, fuzzy
 msgid "copy to clipboard"
 msgstr "в буфер"
 
-#: templates/list.html:64
+#: templates/list.html:61
 msgid "download"
 msgstr "скачать"
 
-#: templates/list.html:69
+#: templates/list.html:66
 msgid "Upload"
 msgstr "Загрузка"
 
-#: templates/list.html:73
+#: templates/list.html:70
 msgid "add"
 msgstr "ещё"
 
-#: templates/list.html:75
+#: templates/list.html:72
 msgid "Upload!"
 msgstr "Загрузить!"
 
-#: templates/list.html:81
+#: templates/list.html:78
 msgid "Preview"
 msgstr "Предпросмотр"
 
-#: templates/list.html:84
+#: templates/list.html:81
 msgid "No picture"
 msgstr "Нет картинки"
 
-#: templates/list.html:91
+#: templates/list.html:89
 msgid "You are here:"
 msgstr "Вы здесь:"
 
-#: templates/list.html:123 templates/list.html.py:157
+#: templates/list.html:121 templates/list.html.py:155
 msgid "Copy"
 msgstr "Копировать"
 
-#: templates/list.html:128 templates/list.html.py:162
+#: templates/list.html:126 templates/list.html.py:160
 msgid "Cut"
 msgstr "Вырезать"
 
-#: templates/list.html:133 templates/list.html.py:167
+#: templates/list.html:131 templates/list.html.py:165
 msgid "Rename"
 msgstr "Переименовать"
 
-#: templates/view_picture.html:18 templates/view_text.html:18
+#: templates/view_picture.html:15 templates/view_text.html:24
 #, fuzzy
 msgid "Download"
 msgstr "Скачать"
 
-#: templates/view_picture.html:27 templates/view_text.html:27
+#: templates/view_picture.html:24 templates/view_text.html:33
 msgid "File:"
 msgstr "Файл:"
