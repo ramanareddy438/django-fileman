@@ -1,188 +1,184 @@
-{% load i18n %}
-<html>
-<head>
-<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
-<title>File Manager</title>
-<link rel='stylesheet' href='{{ fileman_media_url }}/style.css' type='text/css'>
-<script type="text/javascript" src="{{ fileman_media_url }}/jquery.js"></script>
-<script type="text/javascript" src="{{ fileman_media_url }}/jquery.clipboard.js"></script>
-<script type="text/javascript" src="{{ fileman_media_url }}/jsi18n/"></script>
-<script>
-var pwd = "{{ pwd }}";
-var url_media = "{{ fileman_media_url }}";
-var url_preview = "{% url fileman.views.preview %}";
-var url_geturl = "{% url fileman.views.getUrl %}";
-var url_home = "{% url fileman.views.ls %}";
-var url_view = "{% url fileman.views.view %}";
-var url_delete = "{% url fileman.views.delete2 %}";
-var url_destraction = "{% url fileman.views.destraction2 %}";
-var url_createdir = "{% url fileman.views.createDir %}";
-var url_addbufer = "{% url fileman.views.addBuffer %}";
-var url_removebuffer = "{% url fileman.views.RemoveFromBuffer %}";
-</script>
-<script type="text/javascript" src="{{ fileman_media_url }}/script.js"></script>
-</head>
+{% extends "fmbase.html" %}
 
-<body>
-<div id="sidebar">
-<div class="block actions">
-<h2>{% trans "Actions" %}</h2>
-    <div class="content">
-    <p><img src="{{ fileman_media_url }}/user.gif"> {{ user }} <a href="#">[ {% trans "Exit" %} ]</a></p><br>
-    <p><a href="{% url fileman.views.ls %}"><img src="{{ fileman_media_url }}/house.png"> {% trans "Home directory" %}</a></p>
-    {% if perms.fileman.can_fm_add %}<p><a href="#" onclick="return createDir();"><img src="{{ fileman_media_url }}/folder_add.png"> {% trans "Create directory" %}</a></p>{% endif %}
-    {% if perms.fileman.can_fm_add %}<p><a href="{% url fileman.views.past %}{{ pwd }}"><img src="{{ fileman_media_url }}/page_white_paste.png"> {% trans "Past" %}</a></p>{% endif %}
-    {% if perms.fileman.can_fm_del %}<p><a href="{% url fileman.views.listBasket %}"><img src="{{ fileman_media_url }}/bin.png"> {% trans "Recycle Bin" %}</a></p>{% endif %}
-    <br>
-    {% if perms.fileman.can_fm_del %}<p><a href="#" onclick="return del();"><img src="{{ fileman_media_url }}/delete.png"> {% trans "Delete" %}</a></p>{% endif %}
-    {% if perms.fileman.can_fm_destruct %}<p><a href="#" onclick="return dest();"><img src="{{ fileman_media_url }}/cross.png"> {% trans "Destroy" %}</a></p>{% endif %}
-    </div>
-</div>
-<div class="block buffer">
-<h2>{% trans "Buffer" %}</h2>
-    <div class="content">
-    {% if  buffer %}
-    {% for file, action, name in buffer %}
-        <div>{% ifequal action 1 %}<img src="{{ fileman_media_url }}/page_white_copy.png">{% endifequal %}
-        {% ifequal action 2 %}<img src="{{ fileman_media_url }}/cut.png">{% endifequal %}
-        {{ name }}
-        <a href="#" onclick="return RemoveFromBuffer(this, '{{ file }}');"><img src="{{ fileman_media_url }}/cross.png"></a>
+{% load i18n %}
+
+{% block title %}{{ pwd }} &ndash; {{ block.super }}{% endblock %}
+
+{% block js %}
+    <script>
+    var pwd = "{{ pwd }}";
+    var url_media = "{{ fileman_media_url }}";
+    var url_preview = "{% url fileman.views.preview %}";
+    var url_geturl = "{% url fileman.views.getUrl %}";
+    var url_home = "{% url fileman.views.ls %}";
+    var url_view = "{% url fileman.views.view %}";
+    var url_delete = "{% url fileman.views.delete2 %}";
+    var url_destraction = "{% url fileman.views.destraction2 %}";
+    var url_createdir = "{% url fileman.views.createDir %}";
+    var url_addbufer = "{% url fileman.views.addBuffer %}";
+    var url_removebuffer = "{% url fileman.views.RemoveFromBuffer %}";
+    </script>
+    <script type="text/javascript" src="{{ fileman_media_url }}/script.js"></script>
+{% endblock %}
+
+{% block sidebar %}
+    <div class="block actions">
+    <h2>{% trans "Actions" %}</h2>
+        <div class="content">
+        <p><img src="{{ fileman_media_url }}/user.gif"> {{ user }} <a href="#">[ {% trans "Exit" %} ]</a></p><br>
+        <p><a href="{% url fileman.views.ls %}"><img src="{{ fileman_media_url }}/house.png"> {% trans "Home directory" %}</a></p>
+        {% if perms.fileman.can_fm_add %}<p><a href="#" onclick="return createDir();"><img src="{{ fileman_media_url }}/folder_add.png"> {% trans "Create directory" %}</a></p>{% endif %}
+        {% if perms.fileman.can_fm_add %}<p><a href="{% url fileman.views.past %}{{ pwd }}"><img src="{{ fileman_media_url }}/page_white_paste.png"> {% trans "Past" %}</a></p>{% endif %}
+        {% if perms.fileman.can_fm_del %}<p><a href="{% url fileman.views.listBasket %}"><img src="{{ fileman_media_url }}/bin.png"> {% trans "Recycle Bin" %}</a></p>{% endif %}
+        <br>
+        {% if perms.fileman.can_fm_del %}<p><a href="#" onclick="return del();"><img src="{{ fileman_media_url }}/delete.png"> {% trans "Delete" %}</a></p>{% endif %}
+        {% if perms.fileman.can_fm_destruct %}<p><a href="#" onclick="return dest();"><img src="{{ fileman_media_url }}/cross.png"> {% trans "Destroy" %}</a></p>{% endif %}
         </div>
-    {% endfor %}
-    {% else %}
-    <div id="clearBuffer">
-        Буфер пуст.
+    </div>
+    <div class="block buffer">
+    <h2>{% trans "Buffer" %}</h2>
+        <div class="content">
+        {% if  buffer %}
+        {% for file, action, name in buffer %}
+            <div>{% ifequal action 1 %}<img src="{{ fileman_media_url }}/page_white_copy.png">{% endifequal %}
+            {% ifequal action 2 %}<img src="{{ fileman_media_url }}/cut.png">{% endifequal %}
+            {{ name }}
+            <a href="#" onclick="return RemoveFromBuffer(this, '{{ file }}');"><img src="{{ fileman_media_url }}/cross.png"></a>
+            </div>
+        {% endfor %}
+        {% else %}
+        <div id="clearBuffer">
+            Буфер пуст.
+        </div>
+        {% endif %}
+        </div>
+    </div>
+    <div class="block info">
+    <h2>{% trans "Info" %}</h2>
+        <div class="content">
+        <p>{% trans "Link" %}: <input id="url" type="input"></p>
+        <p><a href="#" id="clipboard">{% trans "copy to clipboard" %}</a></p>
+        <p id="download"><a href="#">{% trans "download" %}</a></p>
+        </div>
+    </div>
+    {% if perms.fileman.can_fm_add %}
+    <div class="block upload">
+    <h2>{% trans "Upload" %}</h2>
+        <div class="content">
+        <form id="uploadForm" action="{% url fileman.views.upload %}" method="post" enctype="multipart/form-data">
+        <p><input type="file" name="ufile1" size="10"></p>
+        <p id="addFileFild"><a href="#" onclick="return addFileFild();">{% trans "add" %}</a></p>
+        <p><input type="hidden" name="path" value="{{ pwd }}">
+        <input type="submit" value="{% trans 'Upload!' %}"></p>
+        </form>
+        </div>
     </div>
     {% endif %}
+    <div class="block preview">
+    <h2>{% trans "Preview" %}</h2>
+        <div class="content">
+        <p>
+        {% trans "No picture" %}
+        </p>
+        </div>
     </div>
-</div>
-<div class="block info">
-<h2>{% trans "Info" %}</h2>
-    <div class="content">
-    <p>{% trans "Link" %}: <input id="url" type="input"></p>
-    <p><a href="#" id="clipboard">{% trans "copy to clipboard" %}</a></p>
-    <p id="download"><a href="#">{% trans "download" %}</a></p>
-    </div>
-</div>
-{% if perms.fileman.can_fm_add %}
-<div class="block upload">
-<h2>{% trans "Upload" %}</h2>
-    <div class="content">
-    <form id="uploadForm" action="{% url fileman.views.upload %}" method="post" enctype="multipart/form-data">
-    <p><input type="file" name="ufile1" size="10"></p>
-    <p id="addFileFild"><a href="#" onclick="return addFileFild();">{% trans "add" %}</a></p>
-    <p><input type="hidden" name="path" value="{{ pwd }}">
-    <input type="submit" value="{% trans 'Upload!' %}"></p>
-    </form>
-    </div>
-</div>
-{% endif %}
-<div class="block preview">
-<h2>{% trans "Preview" %}</h2>
-    <div class="content">
-    <p>
-    {% trans "No picture" %}
-    </p>
-    </div>
-</div>
-</div>
-<div id="main">
-{% if perms.fileman.can_fm_list %}
-<div id="pwd"><b>{% trans "You are here:" %}</b> {{ pwd }}</div>
-<form id="fileListForm" method="post">
-<table id="filelist" cellpadding="0" cellspacing="0">
-{% ifnotequal pwd user.fileman_Setting.root %}
-<tr>
-<td><input DISABLED type="checkbox" id="d">
-<img src="{{ fileman_media_url }}/bullet_go.png"> <label for="d" class="dir">..</label></td>
-<td>&nbsp;</td>
-{% if perms.fileman.can_fm_add %}
-<td>&nbsp;</td>
-{% endif %}
-{% if perms.fileman.can_fm_rename %}
-<td>&nbsp;</td>
-{% endif %}
-{% if perms.fileman.can_fm_rename %}
-<td>&nbsp;</td>
-{% endif %}
-{% if perms.fileman.can_fm_del %}
-<td>&nbsp;</td>
-{% endif %}
-{% if perms.fileman.can_fm_destruct %}
-<td>&nbsp;</td>
-{% endif %}
-</tr>
-{% endifnotequal %}
-{% for file in dirlist %}
-<tr><td>
-<input type="checkbox" name="{{ file.name }}" value="{{ file.path }}" id="d{{ forloop.counter }}">
-<img src="{{ fileman_media_url }}/folder.gif"> <label for="d{{ forloop.counter }}" class="dir">{{ file.name }}</label></td>
-<td>{{ file.size }}</td>
-{% if perms.fileman.can_fm_add %}
-<td width="18px">
-    <a href="#" title="{% trans 'Copy' %}"><img src="{{ fileman_media_url }}/page_white_copy.png" alt="{% trans 'Copy'%}"></a>
-</td>
-{% endif %}
-{% if perms.fileman.can_fm_rename %}
-<td width="18px">
-    <a href="#" title="{% trans 'Cut' %}"><img src="{{ fileman_media_url }}/cut.png" alt="Cut"></a>
-</td>
-{% endif %}
-{% if perms.fileman.can_fm_rename %}
-<td width="18px">
-    <a href="#" onclick="return rename(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Rename' %}"><img src="{{ fileman_media_url }}/pencil.png" alt="{% trans 'Rename' %}"></a>
-</td>
-{% endif %}
-{% if perms.fileman.can_fm_del %}
-<td width="18px">
-    <a href="#" onclick="return del_one(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Delete' %}"><img src="{{ fileman_media_url }}/delete.png" alt="{% trans 'Delete' %}"></a>
-</td>
-{% endif %}
-{% if perms.fileman.can_fm_destruct %}
-<td width="18px">
-    <a href="#" onclick="return dest_one(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Destroy' %}"><img src="{{ fileman_media_url }}/cross.png" alt="{% trans 'Destroy' %}"></a>
-</td>
-{% endif %}
-</tr>
-{% endfor %}
-{% for file in filelist %}
-<tr><td>
-<input type="checkbox" name="{{ file.name }}" value="{{ file.path }}" id="f{{ forloop.counter }}">
-<img src="{{ fileman_media_url }}/file.gif"> <label for="f{{ forloop.counter }}" class="file">{{ file.name }}</label></td>
-<td width="100px">
-    {{ file.size|filesizeformat }}
-</td>
-{% if perms.fileman.can_fm_add %}
-<td width="18px">
-    <a href="#" onclick="return copy_one(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Copy' %}"><img src="{{ fileman_media_url }}/page_white_copy.png" alt="{% trans 'Copy' %}"></a>
-</td>
-{% endif %}
-{% if perms.fileman.can_fm_rename %}
-<td width="18px">
-    <a href="#" onclick="return cut_one(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Cut' %}"><img src="{{ fileman_media_url }}/cut.png" alt="{% trans 'Cut' %}"></a>
-</td>
-{% endif %}
-{% if perms.fileman.can_fm_rename %}
-<td width="18px">
-    <a href="#" onclick="return rename(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Rename' %}"><img src="{{ fileman_media_url }}/pencil.png" alt="{% trans 'Rename' %}"></a>
-</td>
-{% endif %}
-{% if perms.fileman.can_fm_del %}
-<td width="18px">
-    <a href="#" onclick="return del_one(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Delete' %}"><img src="{{ fileman_media_url }}/delete.png" alt="{% trans 'Delete' %}"></a>
-</td>
-{% endif %}
-{% if perms.fileman.can_fm_destruct %}
-<td width="18px">
-    <a href="#" onclick="return dest_one(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Destroy' %}"><img src="{{ fileman_media_url }}/cross.png" alt="{% trans 'Destroy' %}"></a>
-</td>
-{% endif %}
-</tr>
-{% endfor %}
-</form>
-</table>
+{% endblock %}
 
-{% endif %}
-</div>
-</body>
-</html>
+{% block main %}
+    {% if perms.fileman.can_fm_list %}
+    <div id="pwd"><b>{% trans "You are here:" %}</b> {{ pwd }}</div>
+    <form id="fileListForm" method="post">
+    <table id="filelist" cellpadding="0" cellspacing="0">
+    {% ifnotequal pwd user.fileman_Setting.root %}
+    <tr>
+    <td><input DISABLED type="checkbox" id="d">
+    <img src="{{ fileman_media_url }}/bullet_go.png"> <label for="d" class="dir">..</label></td>
+    <td>&nbsp;</td>
+    {% if perms.fileman.can_fm_add %}
+    <td>&nbsp;</td>
+    {% endif %}
+    {% if perms.fileman.can_fm_rename %}
+    <td>&nbsp;</td>
+    {% endif %}
+    {% if perms.fileman.can_fm_rename %}
+    <td>&nbsp;</td>
+    {% endif %}
+    {% if perms.fileman.can_fm_del %}
+    <td>&nbsp;</td>
+    {% endif %}
+    {% if perms.fileman.can_fm_destruct %}
+    <td>&nbsp;</td>
+    {% endif %}
+    </tr>
+    {% endifnotequal %}
+    {% for file in dirlist %}
+    <tr><td>
+    <input type="checkbox" name="{{ file.name }}" value="{{ file.path }}" id="d{{ forloop.counter }}">
+    <img src="{{ fileman_media_url }}/folder.gif"> <label for="d{{ forloop.counter }}" class="dir">{{ file.name }}</label></td>
+    <td>{{ file.size }}</td>
+    {% if perms.fileman.can_fm_add %}
+    <td width="18px" class="copy">
+        <a href="#" title="{% trans 'Copy' %}"><img src="{{ fileman_media_url }}/page_white_copy.png" alt="{% trans 'Copy'%}"></a>
+    </td>
+    {% endif %}
+    {% if perms.fileman.can_fm_rename %}
+    <td width="18px" class="cut">
+        <a href="#" title="{% trans 'Cut' %}"><img src="{{ fileman_media_url }}/cut.png" alt="Cut"></a>
+    </td>
+    {% endif %}
+    {% if perms.fileman.can_fm_rename %}
+    <td width="18px" class="rename">
+        <a href="#" onclick="return rename(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Rename' %}"><img src="{{ fileman_media_url }}/pencil.png" alt="{% trans 'Rename' %}"></a>
+    </td>
+    {% endif %}
+    {% if perms.fileman.can_fm_del %}
+    <td width="18px" class="del">
+        <a href="#" onclick="return del_one(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Delete' %}"><img src="{{ fileman_media_url }}/delete.png" alt="{% trans 'Delete' %}"></a>
+    </td>
+    {% endif %}
+    {% if perms.fileman.can_fm_destruct %}
+    <td width="18px" class="dest">
+        <a href="#" onclick="return dest_one(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Destroy' %}"><img src="{{ fileman_media_url }}/cross.png" alt="{% trans 'Destroy' %}"></a>
+    </td>
+    {% endif %}
+    </tr>
+    {% endfor %}
+    {% for file in filelist %}
+    <tr><td>
+    <input type="checkbox" name="{{ file.name }}" value="{{ file.path }}" id="f{{ forloop.counter }}">
+    <img src="{{ fileman_media_url }}/file.gif"> <label for="f{{ forloop.counter }}" class="file">{{ file.name }}</label></td>
+    <td width="100px">
+        {{ file.size|filesizeformat }}
+    </td>
+    {% if perms.fileman.can_fm_add %}
+    <td width="18px" class="copy">
+        <a href="#" onclick="return copy_one(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Copy' %}"><img src="{{ fileman_media_url }}/page_white_copy.png" alt="{% trans 'Copy' %}"></a>
+    </td>
+    {% endif %}
+    {% if perms.fileman.can_fm_rename %}
+    <td width="18px" class="cut">
+        <a href="#" onclick="return cut_one(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Cut' %}"><img src="{{ fileman_media_url }}/cut.png" alt="{% trans 'Cut' %}"></a>
+    </td>
+    {% endif %}
+    {% if perms.fileman.can_fm_rename %}
+    <td width="18px" class="rename">
+        <a href="#" onclick="return rename(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Rename' %}"><img src="{{ fileman_media_url }}/pencil.png" alt="{% trans 'Rename' %}"></a>
+    </td>
+    {% endif %}
+    {% if perms.fileman.can_fm_del %}
+    <td width="18px" class="del">
+        <a href="#" onclick="return del_one(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Delete' %}"><img src="{{ fileman_media_url }}/delete.png" alt="{% trans 'Delete' %}"></a>
+    </td>
+    {% endif %}
+    {% if perms.fileman.can_fm_destruct %}
+    <td width="18px" class="dest">
+        <a href="#" onclick="return dest_one(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Destroy' %}"><img src="{{ fileman_media_url }}/cross.png" alt="{% trans 'Destroy' %}"></a>
+    </td>
+    {% endif %}
+    </tr>
+    {% endfor %}
+    </form>
+    </table>
+
+    {% endif %}
+{% endblock %}

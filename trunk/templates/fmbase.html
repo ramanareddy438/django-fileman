@@ -1,0 +1,22 @@
+<html>
+<head>
+<meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+<title>{% block title %}File Manager{% endblock %}</title>
+<link rel='stylesheet' href='{{ fileman_media_url }}/style.css' type='text/css'>
+{% block css %}{% endblock %}
+<script type="text/javascript" src="{{ fileman_media_url }}/jsi18n/"></script>
+<script type="text/javascript" src="{{ fileman_media_url }}/jquery.js"></script>
+<script type="text/javascript" src="{{ fileman_media_url }}/jquery.clipboard.js"></script>
+<script type="text/javascript" src="{{ fileman_media_url }}/jsi18n/"></script>
+{% block js %}{% endblock %}
+</head>
+
+<body>
+<div id="sidebar">
+{% block sidebar %}{% endblock %}
+</div>
+<div id="main">
+{% block main %}{% endblock %}
+</div>
+</body>
+</html>

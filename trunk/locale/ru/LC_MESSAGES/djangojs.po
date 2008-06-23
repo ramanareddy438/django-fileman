@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-23 04:19+0600\n"
+"POT-Creation-Date: 2008-06-23 12:03+0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,15 +16,31 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: media/script.js:35
-msgid "No access."
-msgstr "Нет доступа."
+#: media/script.js:13 media/script.js.py:15
+msgid "Copy"
+msgstr "Копировать"
 
-#: media/script.js:76
+#: media/script.js:22 media/script.js.py:23
+msgid "Cut"
+msgstr "Вырезать"
+
+#: media/script.js:30 media/script.js.py:31 media/script.js.py:120
+msgid "Rename"
+msgstr "Переименовать"
+
+#: media/script.js:38 media/script.js.py:39
+msgid "Delete"
+msgstr "Удалить"
+
+#: media/script.js:46 media/script.js.py:47
+msgid "Destroy"
+msgstr "Уничтожить"
+
+#: media/script.js:79
 msgid "Are you sure you want to delete selected files?"
 msgstr "Вы уверены, что хотите удалить выделенные файлы?"
 
-#: media/script.js:84
+#: media/script.js:87
 msgid ""
 "Attention! The operation is not reversible! \n"
 "Are you sure you want to destroy the marked files?"
@@ -32,39 +48,31 @@ msgstr ""
 "Внимание! Эта операция необратима! \n"
 "Вы уверены, что хотите уничтожить выделенные файлы?"
 
-#: media/script.js:92
+#: media/script.js:95
 msgid "Create directory:"
 msgstr "Создать директорию:"
 
-#: media/script.js:113 media/script.js.py:115
-msgid "Copy"
-msgstr "Копировать"
-
-#: media/script.js:123 media/script.js.py:147 media/script.js.py:169
-#: media/script.js:192 media/script.js.py:220
-msgid ""
-"Error.\n"
-"Server reports:\n"
-msgstr ""
-"Произошла ошибка.\n"
-"Сервер сообщает:\n"
-
-#: media/script.js:139
-msgid "Cut"
-msgstr "Вырезать"
-
-#: media/script.js:154 media/script.js.py:165
-msgid "Rename"
-msgstr "Переименовать"
-
-#: media/script.js:176
+#: media/script.js:131
 msgid "Are you sure you want to delete "
 msgstr "Вы уверены, что хотите удалить "
 
-#: media/script.js:199
+#: media/script.js:140
 msgid ""
 "Attention! The operation is not reversible! \n"
 "Are you sure you want to destroy "
 msgstr ""
 "Внимание! Эта операция необратима! \n"
 "Вы уверены, что хотите уничтожить "
+
+#: media/script.js:164
+msgid "No access."
+msgstr "Нет доступа."
+
+#: media/script.js:182 media/script.js.py:198 media/script.js.py:213
+#: media/script.js:227 media/script.js.py:239
+msgid ""
+"Error.\n"
+"Server reports:\n"
+msgstr ""
+"Произошла ошибка.\n"
+"Сервер сообщает:\n"
