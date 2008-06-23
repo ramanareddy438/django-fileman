@@ -21,8 +21,10 @@ import pickle, re
 import operator
 from fileman.utils import Fmoper
 from django.utils import simplejson
+from django.core.servers.basehttp import FileWrapper
 # import internationalization
 from django.utils.translation import ugettext as _
+from pytils.translit import slugify
 
 fmoper = Fmoper() # Create file manager object
 
@@ -94,11 +96,16 @@ def ls(request, path = None):
     buffer = listBuffer(request)
     for item in buffer:
         item.append(os.path.basename(item[0]))
+    
+    anonymous = False
+    if request.user == User.objects.get(username="Anonymous"):
+        anonymous = True
     return render_to_response('list.html',
            {"pwd": path,
             "dirlist": dirlist,
             "filelist": filelist,
             "buffer": buffer,
+            "anonymous": anonymous,
             },
             context_instance=RequestContext(request))
 ls = permission_required('fileman.can_fm_list')(ls)
@@ -346,9 +353,8 @@ def download(request, path = None, filename = None, mimetype = None):
     if filename is None: filename = os.path.basename(path)
     if mimetype is None:
         mimetype, encoding = mimetypes.guess_type(filename)
-    response = HttpResponse(mimetype=mimetype)
-    response['Content-Disposition'] = "attachment; filename=%s" %filename
+    response = HttpResponse(FileWrapper(file(path)), mimetype=mimetype)
+    response['Content-Disposition'] = "attachment; filename=%s" % slugify(filename)
     response['Content-Length'] = os.path.getsize(path)
-    response.write(file(path, "rb").read())
     return response
 download = permission_required('fileman.can_fm_list')(download)
