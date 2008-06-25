@@ -3,7 +3,7 @@
  * PIL
  * Installed django.contrib.admin application.
  * Installed django.contrib.auth application.
- * pytils (http://www.pyobject.ru/projects/pytils) [optional]
+ * pytils (http://www.pyobject.ru/projects/pytils) `optional`
 
 = Instructions =
 
