@@ -3,6 +3,7 @@
  * PIL
  * Installed django.contrib.admin application.
  * Installed django.contrib.auth application.
+ * pytils (http://www.pyobject.ru/projects/pytils)
 
 = Instructions =
 
@@ -11,9 +12,13 @@
   * `BASKET_FOLDER` - your "recycle bin" directory 
   * `MEDIA_ROOT` - absolute path to fileman media directory *or* you can comment ` (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),` in `fileman/urls.py` and publish media files using your web server.
   * `MEDIA_URL` - absolute url to fileman media directory
+  * `ANONYMOUSES` - support anonymous users.(see Anonymouses)
+  * `TEXT_EXT` - list of file extensions that can be opened in text mode
+  * `PICTURE_EXT` - list of file extensions that can be opened as images
  # Edit `your_project/settings.py`
   * add `'your_project.fileman',` in `INSTALLED_APPS`
-  * add `"your_project.fileman.context_processors.urls",` in `TEMPLATE_CONTEXT_PROCESSORS`
+  * add `'your_project.fileman.context_processors.urls',` in `TEMPLATE_CONTEXT_PROCESSORS`
+  * add `'fileman.middleware.Anonymous_fileman_Setting',` in `MIDDLEWARE_CLASSES`
   * add absolute path to `fileman/templates/` in `TEMPLATE_DIRS`
  # Run `python manage.py syncdb`
  # Open admin selection, go to Fileman -> Settings and create (or edit) profile for users.
@@ -23,3 +28,7 @@
  # You can add Alias. Example:
   * `Path: /mnt/H/My Developement/django/cyxapeff_org/media/`
   * `Url: http://127.0.0.1:8000/media/`
+
+== Anonymouses ==
+You can use the file manager to allow anonymous users. To do this, you must create a user with the name `Anonymous`. Set root and home directory for him, as well permission.
+In settings.py `ANONYMOUSES` must be `True`.
