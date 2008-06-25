@@ -5,7 +5,7 @@ import os
 import shutil
 
 class File:
-    def __init__(self, name = None, path = None, isdir = None, size = None):
+    def __init__(self, name=None, path=None, isdir=None, size=None):
         self.name = name
         self.path = path
         self.isdir = isdir
@@ -36,12 +36,12 @@ class Fmoper:
                 i += 1
         return dst
         
-    def move(self, src, dst, replace = False):
+    def move(self, src, dst, replace=False):
         if not replace and os.path.exists(dst):
             dst = self.existname(dst)
         return shutil.move(src, dst)
         
-    def copy(self, src, dst, replace = False):
+    def copy(self, src, dst, replace=False):
         if not replace and os.path.exists(dst):
             dst = self.existname(dst) 
         if os.path.isfile(src):

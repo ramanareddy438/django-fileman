@@ -24,19 +24,23 @@ from django.utils import simplejson
 from django.core.servers.basehttp import FileWrapper
 # import internationalization
 from django.utils.translation import ugettext as _
-if PYTILS: from pytils.translit import slugify
-else: from django.template.defaultfilters import slugify
+if PYTILS:
+    from pytils.translit import slugify
+else:
+    from django.template.defaultfilters import slugify
 
 fmoper = Fmoper() # Create file manager object
 
 ###                 Decorators              ###
-def rightPath(canNone = False):
+def rightPath(canNone=False):
     def decor(fn):
         @wraps(fn)
         def wrapper(request, *args, **kw):
             path = None
             if "path" in kw:
                 path = kw["path"]
+            if path is None and len(args)>0:
+                path = args[0]
             if path is None:
                 if canNone:
                     path = request.user.fileman_Setting.home
@@ -48,9 +52,7 @@ def rightPath(canNone = False):
                 return raise_error(request,
                     [_(u"Root or home directory is not set.")])
             root = request.user.fileman_Setting.root
-            if not root[-1:] == "/":
-                root = root + "/"
-            if re.search("^%s" % root, path) is None:
+            if not path.startswith(root):
                 return raise_error(request,
                     [_(u"No access")])
             if not os.path.exists(path):
@@ -68,7 +70,7 @@ def raise_error(request, msg):
                {"msg": msg},
                 context_instance=RequestContext(request))
                 
-def json(data = None):
+def json(data=None):
     if data is None:
         data = {}
     if not isinstance(data, dict):
@@ -78,8 +80,9 @@ def json(data = None):
     json = simplejson.dumps(data)
     return HttpResponse(json, mimetype='application/json')
 
+@permission_required('fileman.can_fm_list')
 @rightPath(True)
-def ls(request, path = None):
+def ls(request, path=None):
     """ Render file list """     
     dirlist = []
     filelist = []
@@ -101,11 +104,8 @@ def ls(request, path = None):
         item.append(os.path.basename(item[0]))
     
     anonymous = False
-    try:
-        if request.user == User.objects.get(username="Anonymous"):
-            anonymous = True
-    except:
-        pass
+    if request.user.username == 'Anonymous':
+        anonymous = True
     return render_to_response('list.html',
            {"pwd": path,
             "dirlist": dirlist,
@@ -114,36 +114,39 @@ def ls(request, path = None):
             "anonymous": anonymous,
             },
             context_instance=RequestContext(request))
-ls = permission_required('fileman.can_fm_list')(ls)
 
+@permission_required('fileman.can_fm_del')
 def listBasket(request):
     """ Render Recycle Bin """
     return ls(request, BASKET_FOLDER)
-listBasket = permission_required('fileman.can_fm_del')(listBasket)
 
-@rightPath
-def view(request, path = None):
+@permission_required('fileman.can_fm_list')
+@rightPath()
+def view(request, path=None):
     """ Render single file """
     name, ext = os.path.splitext(os.path.basename(path))
+    back = os.path.dirname(path)
     if ext in TEXT_EXT:
         f = open(path, 'r')
         data = f.readlines()
         f.close()
         return render_to_response('view_text.html',
            {"pwd": path,
-            "data": file(path, "rb").read()
+            "data": file(path, "rb").read(),
+            "back": back,
             },
             context_instance=RequestContext(request))
     elif ext in PICTURE_EXT:
         return render_to_response('view_picture.html',
            {"pwd": path,
+            "back": back,
             },
             context_instance=RequestContext(request))
     else:
         return download(request, path)
-view = permission_required('fileman.can_fm_list')(view)
 
 ###             Actions with files          ###
+@permission_required('fileman.can_fm_add')
 def upload(request):
     if request.POST:
         post_data = request.POST.copy()
@@ -161,10 +164,10 @@ def upload(request):
     else:
         return raise_error(request,
                 [_(u"Empty form.")])
-upload = permission_required('fileman.can_fm_add')(upload)
 
-@rightPath
-def delete(request, path, inside = False):
+@permission_required('fileman.can_fm_del')
+@rightPath()
+def delete(request, path, inside=False):
     try:
         fmoper.move(path, "%s/%s" % (BASKET_FOLDER, os.path.basename(path)))
     except Exception, msg:
@@ -174,8 +177,8 @@ def delete(request, path, inside = False):
         return json({"status": "success"})
     else:
         return ls(request, os.path.dirname(path))
-delete = permission_required('fileman.can_fm_del')(delete)
 
+@permission_required('fileman.can_fm_del')
 def delete2(request):
     if request.POST:
         if request.GET.has_key('next'):
@@ -194,9 +197,9 @@ def delete2(request):
     else:
         return raise_error(request,
             [_(u"Empty form.")])
-delete2 = permission_required('fileman.can_fm_del')(delete2)
-                
-@rightPath
+        
+@permission_required('fileman.can_fm_destruct')        
+@rightPath()
 def destraction(request, path):
     try:
         fmoper.remove(path)
@@ -207,8 +210,8 @@ def destraction(request, path):
         return json({"status": "success"})
     else:
         return ls(request, os.path.dirname(path))
-destraction = permission_required('fileman.can_fm_destruct')(destraction)
     
+@permission_required('fileman.can_fm_destruct')
 def destraction2(request):
     if request.POST:
         if request.GET.has_key('next'):
@@ -227,10 +230,10 @@ def destraction2(request):
     else:
         return raise_error(request,
             [_(u"Empty form.")])
-destraction2 = permission_required('fileman.can_fm_destruct')(destraction2)
 
-@rightPath
-def rename(request, path = None, newName = None):
+@permission_required('fileman.can_fm_rename')
+@rightPath()
+def rename(request, path=None, newName=None):
     if path is None:
         return raise_error(request,
                 [_(u"Input error")])
@@ -250,14 +253,16 @@ def rename(request, path = None, newName = None):
     if request.is_ajax():
         return json({"status": "success", "path": dest})
     return HttpResponseRedirect('/fm/list/%s' % next)
-rename = permission_required('fileman.can_fm_rename')(rename)
-                
-def createDir(request, path = None):
+     
+@permission_required('fileman.can_fm_add')           
+def createDir(request, path=None):
     if path is None:
         return HttpResponse(_(u"Path does not set."))
-    os.mkdir(path)
+    try:
+        os.mkdir(path)
+    except:
+        pass
     return HttpResponseRedirect('/fm/list/%s' % path)
-createDir = permission_required('fileman.can_fm_add')(createDir)
 
 ###                  Buffer                 ###
 @login_required
@@ -297,8 +302,9 @@ def listBuffer(request):
 def clearBuffer(request):
     request.user.fileman_Setting.writeBuffer("")
     
-@rightPath
-def past(request, path = None):
+@permission_required('fileman.can_fm_rename')
+@rightPath()
+def past(request, path=None):
     buffer = listBuffer(request)
     for item in buffer:
         to = os.path.basename(item[0])
@@ -314,10 +320,10 @@ def past(request, path = None):
             rename(request, item[0], os.path.join(path, to))
     clearBuffer(request)
     return HttpResponseRedirect('/fm/list/%s' % path)
-past = permission_required('fileman.can_fm_rename')(past)
 
-@rightPath
-def RemoveFromBuffer(request, path = None):
+@login_required
+@rightPath()
+def RemoveFromBuffer(request, path=None):
     buffer = listBuffer(request)
     if [path, 1] in buffer:
         buffer.remove([path, 1])
@@ -327,18 +333,19 @@ def RemoveFromBuffer(request, path = None):
     return json({"status": "success"})
     
 ###                  Others                 ###
-@rightPath
-def preview(request, path = None, size = (176, 176)):
+@permission_required('fileman.can_fm_list')
+@rightPath()
+def preview(request, path=None, size=(176, 176)):
     from PIL import Image
     im = Image.open(path)
     im.thumbnail(size, Image.ANTIALIAS)
     response = HttpResponse(mimetype="image/png")
     im.save(response, "PNG")
     return response
-preview = permission_required('fileman.can_fm_list')(preview)
     
-@rightPath
-def getUrl(request, path = None):
+@permission_required('fileman.can_fm_list')
+@rightPath()
+def getUrl(request, path=None):
     for alias in Alias.objects.all():
         if path.startswith(alias.path):
             url = path.replace(alias.path, alias.url)
@@ -349,13 +356,14 @@ def getUrl(request, path = None):
         return json({"status": "error"})
     return HttpResponse(_(u"No access."))
     
-@rightPath
-def image(request, path = None):
+@permission_required('fileman.can_fm_list')
+@rightPath()
+def image(request, path=None):
     return preview(request, path, (800, 2000))
-image = permission_required('fileman.can_fm_list')(image)
 
-@rightPath
-def download(request, path = None, filename = None, mimetype = None):
+@permission_required('fileman.can_fm_list')
+@rightPath()
+def download(request, path=None, filename=None, mimetype=None):
     if filename is None: filename = os.path.basename(path)
     if mimetype is None:
         mimetype, encoding = mimetypes.guess_type(filename)
@@ -363,4 +371,3 @@ def download(request, path = None, filename = None, mimetype = None):
     response['Content-Disposition'] = "attachment; filename=%s" % slugify(filename)
     response['Content-Length'] = os.path.getsize(path)
     return response
-download = permission_required('fileman.can_fm_list')(download)
