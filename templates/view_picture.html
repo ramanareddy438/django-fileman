@@ -9,6 +9,7 @@
     <h2>{% trans "Actions" %}</h2>
         <div class="content">
         <p><img src="{{ fileman_media_url }}/user.gif"> {{ user }} <a href="#">[ {% trans "Exit" %} ]</a></p><br>
+        <p><a href="{% url ls_path back %}"><img src="{{ fileman_media_url }}/bullet_go.png"> {% trans "Back" %}</a></p>
         <p><a href="{% url fileman.views.ls %}"><img src="{{ fileman_media_url }}/house.png"> {% trans "Home directory" %}</a></p>
         {% if perms.fileman.can_fm_del %}<p><a href="{% url fileman.views.listBasket %}"><img src="{{ fileman_media_url }}/bin.png"> {% trans "Recycle Bin" %}</a></p>{% endif %}
         <br>

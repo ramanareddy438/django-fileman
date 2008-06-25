@@ -1,0 +1,34 @@
+{% load i18n %}
+
+{% for file in dirlist %}
+    <tr><td>
+    <input type="checkbox" name="{{ file.name }}" value="{{ file.path }}" id="d{{ forloop.counter }}">
+    <img src="{{ fileman_media_url }}/folder.gif"> <label for="d{{ forloop.counter }}" class="dir">{{ file.name }}</label></td>
+    <td>{{ file.size }}</td>
+    {% if perms.fileman.can_fm_add %}
+    <td width="18px" class="copy">
+        <a href="#" title="{% trans 'Copy' %}"><img src="{{ fileman_media_url }}/page_white_copy.png" alt="{% trans 'Copy'%}"></a>
+    </td>
+    {% endif %}
+    {% if perms.fileman.can_fm_rename %}
+    <td width="18px" class="cut">
+        <a href="#" title="{% trans 'Cut' %}"><img src="{{ fileman_media_url }}/cut.png" alt="Cut"></a>
+    </td>
+    {% endif %}
+    {% if perms.fileman.can_fm_rename %}
+    <td width="18px" class="rename">
+        <a href="#" onclick="return rename(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Rename' %}"><img src="{{ fileman_media_url }}/pencil.png" alt="{% trans 'Rename' %}"></a>
+    </td>
+    {% endif %}
+    {% if perms.fileman.can_fm_del %}
+    <td width="18px" class="del">
+        <a href="#" onclick="return del_one(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Delete' %}"><img src="{{ fileman_media_url }}/delete.png" alt="{% trans 'Delete' %}"></a>
+    </td>
+    {% endif %}
+    {% if perms.fileman.can_fm_destruct %}
+    <td width="18px" class="dest">
+        <a href="#" onclick="return dest_one(this, '{{ file.name }}', '{{ file.path }}');" title="{% trans 'Destroy' %}"><img src="{{ fileman_media_url }}/cross.png" alt="{% trans 'Destroy' %}"></a>
+    </td>
+    {% endif %}
+    </tr>
+{% endfor %}

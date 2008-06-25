@@ -11,7 +11,7 @@ urlpatterns = patterns('',
 
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
     (r'^list/$', views.ls),
-    (r'^list/(?P<path>.+)/$', views.ls),
+    url(r'^list/(?P<path>.+)/$', views.ls, name="ls_path"),
     (r'^preview/$', views.preview),
     (r'^preview/(?P<path>.+)$', views.preview),
     (r'^geturl/$', views.getUrl),

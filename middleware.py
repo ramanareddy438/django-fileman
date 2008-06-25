@@ -9,5 +9,5 @@ class Anonymous_fileman_Setting(object):
             try:
                 user = User.objects.get(username="Anonymous")
                 request.user = user
-            except:
+            except User.DoesNotExist:
                 pass
