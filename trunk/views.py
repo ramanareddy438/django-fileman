@@ -57,8 +57,8 @@ def raise_error(request, msg):
 def json(data = None):
     if data is None:
         data = {}
-    if not type(data) == type(dict()):
-        raise Exception('ajax TypeError')
+    if not isinstance(data, dict):
+        raise TypeError
     if 'status' not in data:
         data['status'] = "success"
     json = simplejson.dumps(data)

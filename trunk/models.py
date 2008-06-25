@@ -2,7 +2,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User
-from fileman.fields import AutoOneToOneField
+from fileman.fields import AutoForeignKey
 
 from django.utils.translation import ugettext as _
 
@@ -12,7 +12,7 @@ ACTIONS = {"add": _(u"Upload file %s"),
     "destraction": _(u"Destroy file %s")}
 
 class Setting(models.Model):
-    owner = AutoOneToOneField(User, related_name='fileman_Setting')
+    owner = AutoForeignKey(User, unique=True, related_name='fileman_Setting')
     root = models.CharField(max_length=250, null=True)
     home = models.CharField(max_length=250, null=True)
     buffer = models.TextField(blank=True)
