@@ -17,7 +17,7 @@ class Setting(models.Model):
     home = models.CharField(max_length=250, null=True)
     buffer = models.TextField(blank=True)
     class Admin:
-        pass
+        list_display = ('owner', 'root', 'home')
     class Meta:
         permissions = (
             ("can_fm_list", _("Can look files list")),

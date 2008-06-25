@@ -24,27 +24,41 @@ from django.utils import simplejson
 from django.core.servers.basehttp import FileWrapper
 # import internationalization
 from django.utils.translation import ugettext as _
-from pytils.translit import slugify
+if PYTILS: from pytils.translit import slugify
+else: from django.template.defaultfilters import slugify
 
 fmoper = Fmoper() # Create file manager object
 
 ###                 Decorators              ###
-def rightPath(fn):
-    @wraps(fn)
-    def wrapper(request, *args, **kw):
-        if "path" in kw:
-            path = kw["path"]
+def rightPath(canNone = False):
+    def decor(fn):
+        @wraps(fn)
+        def wrapper(request, *args, **kw):
+            path = None
+            if "path" in kw:
+                path = kw["path"]
             if path is None:
+                if canNone:
+                    path = request.user.fileman_Setting.home
+                    kw["path"] = path
+                else:
+                    return raise_error(request,
+                        [_(u"Path does not set.")])
+            if request.user.fileman_Setting.home is None or request.user.fileman_Setting.root is None:
                 return raise_error(request,
-                    [_(u"Path does not set.")])
-            if re.search("^%s" % request.user.fileman_Setting.root, path) is None:
+                    [_(u"Root or home directory is not set.")])
+            root = request.user.fileman_Setting.root
+            if not root[-1:] == "/":
+                root = root + "/"
+            if re.search("^%s" % root, path) is None:
                 return raise_error(request,
                     [_(u"No access")])
             if not os.path.exists(path):
                 return raise_error(request,
                     [_(u"Path does not exist.")])
-        return fn(request, *args, **kw)
-    return wrapper
+            return fn(request, *args, **kw)
+        return wrapper
+    return decor
 
 ###                 Render                  ###
 def raise_error(request, msg):
@@ -64,20 +78,9 @@ def json(data = None):
     json = simplejson.dumps(data)
     return HttpResponse(json, mimetype='application/json')
 
+@rightPath(True)
 def ls(request, path = None):
-    """ Render file list """
-    if request.user.fileman_Setting.home is None or request.user.fileman_Setting.root is None:
-        return raise_error(request,
-            [_(u"Root or home directory is not set.")])
-    if path is None:
-        path = request.user.fileman_Setting.home
-    if not os.path.exists(path):
-        return raise_error(request,
-            [_(u"Path does not exist.")])
-    if re.search("^%s" % request.user.fileman_Setting.root, path) is None:
-        return raise_error(request,
-            [_(u"No access")])
-        
+    """ Render file list """     
     dirlist = []
     filelist = []
     for f in os.listdir(path):
@@ -98,8 +101,11 @@ def ls(request, path = None):
         item.append(os.path.basename(item[0]))
     
     anonymous = False
-    if request.user == User.objects.get(username="Anonymous"):
-        anonymous = True
+    try:
+        if request.user == User.objects.get(username="Anonymous"):
+            anonymous = True
+    except:
+        pass
     return render_to_response('list.html',
            {"pwd": path,
             "dirlist": dirlist,

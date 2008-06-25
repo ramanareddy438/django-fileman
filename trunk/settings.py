@@ -6,3 +6,4 @@ MEDIA_URL = "/fm/media" # exmple: "http://example.com/fileman/media" or "/media/
 ANONYMOUSES = True
 TEXT_EXT = (".txt", ".py", ".html", ".htm", ".php", ".js")
 PICTURE_EXT = (".jpg", ".gif", ".png")
+PYTILS = True
