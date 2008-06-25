@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 
-from django.db.models import OneToOneField
+from django.db.models import ForeignKey
 from django.db.models.fields.related import SingleRelatedObjectDescriptor 
       
 class AutoSingleRelatedObjectDescriptor(SingleRelatedObjectDescriptor):
@@ -16,7 +16,7 @@ class AutoSingleRelatedObjectDescriptor(SingleRelatedObjectDescriptor):
     return getattr(instance, cached_name)
 
 
-class AutoOneToOneField(OneToOneField):
+class AutoForeignKey(ForeignKey):
   '''
   OneToOneField, которое создает зависимый объект при первом обращении
   из родительского, если он еще не создан.
@@ -26,4 +26,4 @@ class AutoOneToOneField(OneToOneField):
     if not cls._meta.one_to_one_field:
       cls._meta.one_to_one_field = self
   def get_internal_type(self):
-      return 'OneToOneField'
+      return 'ForeignKey'
