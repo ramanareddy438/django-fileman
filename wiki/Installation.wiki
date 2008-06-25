@@ -3,7 +3,7 @@
  * PIL
  * Installed django.contrib.admin application.
  * Installed django.contrib.auth application.
- * pytils (http://www.pyobject.ru/projects/pytils)
+ * pytils (http://www.pyobject.ru/projects/pytils) [optional]
 
 = Instructions =
 
@@ -15,6 +15,7 @@
   * `ANONYMOUSES` - support anonymous users.(see Anonymouses)
   * `TEXT_EXT` - list of file extensions that can be opened in text mode
   * `PICTURE_EXT` - list of file extensions that can be opened as images
+  * `PYTILS` - using pytils (need if you have files with Russian name)
  # Edit `your_project/settings.py`
   * add `'your_project.fileman',` in `INSTALLED_APPS`
   * add `'your_project.fileman.context_processors.urls',` in `TEMPLATE_CONTEXT_PROCESSORS`
