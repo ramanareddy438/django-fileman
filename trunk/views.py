@@ -16,10 +16,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
 from functools import wraps
 # import filesystem and others main modules
-import os, mimetypes, shutil
-import pickle, re
+import os, mimetypes
+import fmoper
+import pickle
 import operator
-from fileman.utils import Fmoper
 from django.utils import simplejson
 from django.core.servers.basehttp import FileWrapper
 # import internationalization
@@ -28,8 +28,6 @@ if PYTILS:
     from pytils.translit import slugify
 else:
     from django.template.defaultfilters import slugify
-
-fmoper = Fmoper() # Create file manager object
 
 ###                 Decorators              ###
 def rightPath(canNone=False):
@@ -150,7 +148,7 @@ def view(request, path=None):
 def upload(request):
     if request.POST:
         post_data = request.POST.copy()
-        if re.search("^%s" % request.user.fileman_Setting.root, post_data['path']) is None:
+        if not post_data['path'].startswith(request.user.fileman_Setting.root):
             return raise_error(request,
                 [_(u"No access")])
         post_data.update(request.FILES)
@@ -171,7 +169,7 @@ def delete(request, path, inside=False):
     try:
         fmoper.move(path, "%s/%s" % (BASKET_FOLDER, os.path.basename(path)))
     except Exception, msg:
-        return raise_error(request, [msg])
+        return raise_error(request, [str(msg)])
     createHistory(request.user, "delete", path)
     if request.is_ajax():
         return json({"status": "success"})
@@ -189,7 +187,7 @@ def delete2(request):
             try:
                 fmoper.move(request.POST[key], "%s/%s" % (BASKET_FOLDER, os.path.basename(request.POST[key])))
             except Exception, msg:
-                return raise_error(request, [msg])
+                return raise_error(request, [str(msg)])
             createHistory(request.user, "destraction", request.POST[key])
         if request.is_ajax():
             return json({"status": "success"})
@@ -204,7 +202,7 @@ def destraction(request, path):
     try:
         fmoper.remove(path)
     except Exception, msg:
-            return raise_error(request, [msg])  
+            return raise_error(request, [str(msg)])  
     createHistory(request.user, "destraction", path)  
     if request.is_ajax():
         return json({"status": "success"})
@@ -222,7 +220,7 @@ def destraction2(request):
             try:
                 fmoper.remove(request.POST[key])
             except Exception, msg:
-                return raise_error(request, [msg])
+                return raise_error(request, [str(msg)])
             createHistory(request.user, "destraction", request.POST[key])
         if request.is_ajax():
             return json({"status": "success"})
@@ -260,8 +258,8 @@ def createDir(request, path=None):
         return HttpResponse(_(u"Path does not set."))
     try:
         os.mkdir(path)
-    except:
-        pass
+    except Exception, msg:
+        return raise_error(request, [str(msg)])
     return HttpResponseRedirect('/fm/list/%s' % path)
 
 ###                  Buffer                 ###
@@ -269,7 +267,7 @@ def createDir(request, path=None):
 def addBuffer(request):
     if request.POST:
         path = request.POST['path']
-        if re.search("^%s" % request.user.fileman_Setting.root, path) is None:
+        if not path.startswith(request.user.fileman_Setting.root):
             return raise_error(request,
                     [_(u"No access")])
         if request.POST['action'] == "copy":
@@ -315,7 +313,7 @@ def past(request, path=None):
             to = os.path.splitext(to)[0][:-1]+str(i)+os.path.splitext(to)[1]
             i+=1
         if item[1] == 1:
-            shutil.copy(item[0], os.path.join(path, to))
+            fmoper.copy(item[0], os.path.join(path, to))
         elif item[1] == 2:
             rename(request, item[0], os.path.join(path, to))
     clearBuffer(request)
