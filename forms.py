@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from django import newforms as forms
+from django import forms
 import os.path
+from fileman.utils import createHistory
 
 from django.utils.translation import ugettext as _
 
@@ -30,10 +31,14 @@ class UploadForm:
         else:
             return True
         
-    def save(self):
+    def save(self, request):
         for file in self.files:
-            f = open(os.path.join(self.path, file['filename']), 'w')
-            f.write(file['content'])
-            f.close()
-            createHistory(request.user, "add", os.path.join(self.path, file['filename']))
+            self.handle_uploaded_file(file)
+            createHistory(request.user, "add", os.path.join(self.path, file.name))
         return True
+        
+    def handle_uploaded_file(self, f):
+        destination = open(os.path.join(self.path, f.name), 'wb+')
+        for chunk in f.chunks():
+            destination.write(chunk)
+        destination.close()

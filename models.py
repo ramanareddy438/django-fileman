@@ -16,8 +16,6 @@ class Setting(models.Model):
     root = models.CharField(max_length=250, null=True)
     home = models.CharField(max_length=250, null=True)
     buffer = models.TextField(blank=True)
-    class Admin:
-        list_display = ('owner', 'root', 'home')
     class Meta:
         permissions = (
             ("can_fm_list", _("Can look files list")),
@@ -42,9 +40,6 @@ class History(models.Model):
     action = models.CharField(max_length=250)
     author = models.ForeignKey(User)
     date = models.DateTimeField(auto_now_add=True)
-    class Admin:
-        list_display = ('action', 'date', 'author')
-        list_filter = ('date',)
     class Meta:
         verbose_name_plural = "History"
     def __unicode__(self):
@@ -53,8 +48,6 @@ class History(models.Model):
 class Alias(models.Model):
     path = models.CharField(max_length=250)
     url = models.CharField(max_length=250)
-    class Admin:
-        pass
     class Meta:
         verbose_name_plural = "Alias"
     def __unicode__(self):
