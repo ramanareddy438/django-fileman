@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     (r'^media/jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
 
     (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
+    (r'^$', views.ls),
     (r'^list/$', views.ls),
     url(r'^list/(?P<path>.+)/$', views.ls, name="ls_path"),
     (r'^preview/$', views.preview),

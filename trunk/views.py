@@ -14,7 +14,10 @@ from django.template import RequestContext
 # import decorators
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
-from functools import wraps
+try:
+    from functools import wraps
+except:
+    from django.utils.functional import wraps # python 2.3, 2.4
 # import filesystem and others main modules
 import os, mimetypes
 import fmoper
@@ -85,7 +88,7 @@ def ls(request, path=None):
     dirlist = []
     filelist = []
     for f in os.listdir(path):
-        file = File(f, "%s/%s" % (path, f))
+        file = File(f, u"%s/%s" % (path, f))
         if os.path.isdir(os.path.join(path, f)):
             file.isdir = 1
             file.size = "Dir"
@@ -154,7 +157,7 @@ def upload(request):
         post_data.update(request.FILES)
         form = UploadForm(post_data)
         if form.is_valid():
-            form.save()
+            form.save(request)
             return HttpResponseRedirect('/fm/list/%s' % form.path)
         else:
             return raise_error(request,
