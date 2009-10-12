@@ -38,18 +38,22 @@ INSTALLATION:
             * ANONYMOUSES - support anonymous users.(see Anonymouses)
             * TEXT_EXT - list of file extensions that can be opened in text mode
             * PICTURE_EXT - list of file extensions that can be opened as images
-            * `PYTILS` - using pytils (need if you have files with Russian name)
+            * PYTILS - using pytils (need if you have files with Russian name)
      3. Edit your_project/settings.py
             * add 'your_project.fileman', in INSTALLED_APPS
             * add 'your_project.fileman.context_processors.urls', in TEMPLATE_CONTEXT_PROCESSORS
             * add 'fileman.middleware.Anonymous_fileman_Setting', in MIDDLEWARE_CLASSES
-            * add absolute path to fileman/templates/ in TEMPLATE_DIRS 
-     4. Run python manage.py syncdb
-     5. Open admin selection, go to Fileman -> Settings and create (or edit) profile for users.
+            * add absolute path to fileman/templates/ in TEMPLATE_DIRS
+     4. Edit your_project/urls.py
+            * add (r'^fm/', include('cyxapeff_org.fileman.urls')), in patterns
+     5. Run python manage.py syncdb
+     6. Open admin selection, go to Fileman -> Settings and create (or edit) profile for users.
             * Root - root directory for user
             * Home - home directory for user 
-     6. Give permission for non-admin users.
-     7. You can add Alias. Example:
+     7. Give permission for non-admin users.
+            * Select user in django site admin
+            * Add user permissions (for example, "fileman | setting | Can look files list")
+     8. You can add Alias. Example:
             * Path: /mnt/H/My Developement/django/cyxapeff_org/media/
             * Url: http://127.0.0.1:8000/media/ 
 
