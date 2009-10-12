@@ -2,11 +2,11 @@
 
 from fileman.settings import *
 # import models
-from fileman.models import Setting, Alias 
+from fileman.models import Setting, Alias
 from django.contrib.auth.models import User
 # import utils
 from fileman.forms import UploadForm
-from fileman.utils import File, createHistory
+from fileman.utils import File, createHistory, toUnicode, toString
 # import django functions
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponseRedirect, HttpResponse
@@ -53,10 +53,11 @@ def rightPath(canNone=False):
                 return raise_error(request,
                     [_(u"Root or home directory is not set.")])
             root = request.user.fileman_Setting.root
+            path = toUnicode(path)
             if not path.startswith(root):
                 return raise_error(request,
                     [_(u"No access")])
-            if not os.path.exists(path):
+            if not os.path.exists(toString(path)):
                 return raise_error(request,
                     [_(u"Path does not exist.")])
             return fn(request, *args, **kw)
@@ -84,11 +85,13 @@ def json(data=None):
 @permission_required('fileman.can_fm_list')
 @rightPath(True)
 def ls(request, path=None):
-    """ Render file list """     
+    """ Render file list """
+    path = toString(path)
     dirlist = []
     filelist = []
     for f in os.listdir(path):
-        file = File(f, u"%s/%s" % (path, f))
+        f = toString(f)
+        file = File(f, "%s/%s" % (path, f))
         if os.path.isdir(os.path.join(path, f)):
             file.isdir = 1
             file.size = "Dir"
@@ -125,6 +128,7 @@ def listBasket(request):
 @rightPath()
 def view(request, path=None):
     """ Render single file """
+    path = toString(path)
     name, ext = os.path.splitext(os.path.basename(path))
     back = os.path.dirname(path)
     if ext in TEXT_EXT:
@@ -169,6 +173,7 @@ def upload(request):
 @permission_required('fileman.can_fm_del')
 @rightPath()
 def delete(request, path, inside=False):
+    path = toString(path)
     try:
         fmoper.move(path, "%s/%s" % (BASKET_FOLDER, os.path.basename(path)))
     except Exception, msg:
@@ -199,14 +204,15 @@ def delete2(request):
         return raise_error(request,
             [_(u"Empty form.")])
         
-@permission_required('fileman.can_fm_destruct')        
+@permission_required('fileman.can_fm_destruct')
 @rightPath()
 def destraction(request, path):
+    path = toString(path)
     try:
         fmoper.remove(path)
     except Exception, msg:
-            return raise_error(request, [str(msg)])  
-    createHistory(request.user, "destraction", path)  
+            return raise_error(request, [str(msg)])
+    createHistory(request.user, "destraction", path)
     if request.is_ajax():
         return json({"status": "success"})
     else:
@@ -244,6 +250,8 @@ def rename(request, path=None, newName=None):
         else:
             return raise_error(request,
                     [_(u"Input error")])
+    path = toString(path)
+    newName = toString(newName)
     dest = os.path.join(os.path.dirname(path), newName)
     fmoper.move(path, dest)
     createHistory(request.user, "rename", path, dest)
@@ -255,11 +263,12 @@ def rename(request, path=None, newName=None):
         return json({"status": "success", "path": dest})
     return HttpResponseRedirect('/fm/list/%s' % next)
      
-@permission_required('fileman.can_fm_add')           
+@permission_required('fileman.can_fm_add')
 def createDir(request, path=None):
     if path is None:
         return HttpResponse(_(u"Path does not set."))
     try:
+        path = toString(path)
         os.mkdir(path)
     except Exception, msg:
         return raise_error(request, [str(msg)])
@@ -338,6 +347,7 @@ def RemoveFromBuffer(request, path=None):
 @rightPath()
 def preview(request, path=None, size=(176, 176)):
     from PIL import Image
+    path = toString(path)
     im = Image.open(path)
     im.thumbnail(size, Image.ANTIALIAS)
     response = HttpResponse(mimetype="image/png")
@@ -347,6 +357,7 @@ def preview(request, path=None, size=(176, 176)):
 @permission_required('fileman.can_fm_list')
 @rightPath()
 def getUrl(request, path=None):
+    path = toString(path)
     for alias in Alias.objects.all():
         if path.startswith(alias.path):
             url = path.replace(alias.path, alias.url)
@@ -365,10 +376,12 @@ def image(request, path=None):
 @permission_required('fileman.can_fm_list')
 @rightPath()
 def download(request, path=None, filename=None, mimetype=None):
+    path = toString(path)
     if filename is None: filename = os.path.basename(path)
     if mimetype is None:
         mimetype, encoding = mimetypes.guess_type(filename)
+    filename, ext = os.path.splitext(filename)
     response = HttpResponse(FileWrapper(file(path)), mimetype=mimetype)
-    response['Content-Disposition'] = "attachment; filename=%s" % slugify(filename)
+    response['Content-Disposition'] = "attachment; filename=%s%s" % (slugify(filename), ext)
     response['Content-Length'] = os.path.getsize(path)
     return response
